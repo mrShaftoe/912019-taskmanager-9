@@ -17,14 +17,55 @@ const BOARD_FILTERS = [`SORT BY DEFAULT`, `SORT BY DATE up`, `SORT BY DATE down`
 const CARD_CONTROLS = [`edit`, `archive`, `favorites`];
 const CardsData = [
   {
-    color: `black`,
-    colorBar: `wave`,
     text: `Example default task with default color.`,
     date: `23 September`,
     time: `11:15 PM`,
-    hashtags: [`todo`, `personal`, `important`]
+    hashtags: [`todo`, `personal`, `important`],
+  },
+  {
+    color: `blue`,
+    text: `Example default task with custom color.`,
+    date: `23 September`,
+    time: `11:15 PM`,
+    hashtags: [`todo`, `personal`, `important`],
+  },
+  {
+    color: `yellow`,
+    text: `Example default task with custom color and without date.`,
+    hashtags: [`todo`, `personal`, `important`],
+  },
+  {
+    color: `green`,
+    text: `Example default task with custom color and without hashtags.`,
+    date: `23 September`,
+    time: `11:15 PM`
+  },
+  {
+    text: `Example default task without date and hashtags.`,
+  },
+  {
+    color: `pink`,
+    text: `It is example of repeating task. It marks by wave.`,
+    date: `23 September`,
+    time: `11:15 PM`,
+    hashtags: [`todo`, `personal`, `important`],
+    repeat: true
+  },
+  {
+    color: `red`,
+    text: `This is card with missing deadline.`,
+    deadline: true
+  },
+  {
+    text: `This is card with missing deadline. Deadline always marked by red line.`,
+    date: `23 September`,
+    time: `11:15 PM`,
+    hashtags: [`todo`, `personal`, `important`],
+    repeat: false,
+    deadline: true
   }
 ];
+
 const main = document.querySelector(`.main`);
 const controlContainer = main.querySelector(`.main__control`);
 
@@ -48,7 +89,7 @@ const getControlElement = function (caption, text, isChecked = false) {
   `;
 };
 
-const getControlElements = function () {
+const renderControlElements = function () {
   renderComponent(
       controlContainer,
       `<section class="control__btn-wrap"></section>`
@@ -60,9 +101,8 @@ const getControlElements = function () {
 };
 
 const getSearchElement = function () {
-  renderComponent(
-      main,
-      `<section class="main__search search container">
+  return `
+      <section class="main__search search container">
         <input
           type="text"
           id="search__input"
@@ -70,8 +110,8 @@ const getSearchElement = function () {
           placeholder="START TYPING — SEARCH BY WORD, #HASHTAG OR DATE"
         />
         <label class="visually-hidden" for="search__input">Search</label>
-      </section>`
-  );
+      </section>
+  `;
 };
 
 const getFilterElement = function (caption, count, isChecked = false) {
@@ -91,7 +131,7 @@ const getFilterElement = function (caption, count, isChecked = false) {
   `;
 };
 
-const getFilterElements = function () {
+const renderFilterElements = function () {
   renderComponent(
       main,
       `<section class="main__filter filter container"></section>`
@@ -106,7 +146,7 @@ const getBoardFilter = function (caption) {
   return `<a href="#" class="board__filter">${caption}</a>`;
 };
 
-const getBoardFilterList = function (board) {
+const renderBoardFilterList = function (board) {
   renderComponent(
       board,
       `<div class="board__filter-list"></div>`
@@ -117,7 +157,7 @@ const getBoardFilterList = function (board) {
   );
 };
 
-const getCardButton = function (caption) {
+const getCardControlButton = function (caption) {
   return `
       <button
         type="button"
@@ -130,11 +170,20 @@ const getCardButton = function (caption) {
   `;
 };
 
-const getCardControl = function (container) {
+const renderCardControl = function (container, controls) {
   renderComponent(container, `<div class="card__control"></div>`);
   const cardControl = container.querySelector(`.card__control`);
-  CARD_CONTROLS.forEach(
-      (it) => renderComponent(cardControl, getCardButton(it))
+  controls.forEach(
+      (it) => renderComponent(cardControl, getCardControlButton(it))
+  );
+};
+
+const getCardText = function (container, text) {
+  renderComponent(
+      container,
+      `<div class="card__textarea-wrap">
+        <p class="card__text">${text}</p>
+      </div>`
   );
 };
 
@@ -148,30 +197,329 @@ const getHashtag = function (name) {
   `;
 };
 
-const getHashtags = function (container, hashtags) {
+const renderHashtags = function (container, hashtags) {
+  if (hashtags) {
+    renderComponent(
+        container,
+        `<div class="card__hashtag">
+          <div class="card__hashtag-list"></div>
+        </div>`
+    );
+    const hastagsList = container.querySelector(`.card__hashtag-list`);
+    hashtags.forEach(
+        (it) => renderComponent(hastagsList, getHashtag(it))
+    );
+  }
+};
+
+const getDateTime = function (type, value) {
+  return `
+    <span class="card__${type.toLowerCase()}">${value}</span>
+  `;
+};
+
+const renderCardDates = function (container, obj) {
+  if (obj.date || obj.time) {
+    renderComponent(
+        container,
+        `<div class="card__dates">
+          <div class="card__date-deadline">
+            <p class="card__input-deadline-wrap"></p>
+          </div>
+        </div>`
+    );
+  }
+  const cardInput = container.querySelector(`.card__input-deadline-wrap`);
+
+  if (obj.date) {
+    renderComponent(
+        cardInput,
+        getDateTime(`date`, obj.date)
+    );
+  }
+
+  if (obj.time) {
+    renderComponent(
+        cardInput,
+        getDateTime(`time`, obj.time)
+    );
+  }
+};
+
+
+const renderCardDetails = function (container, obj) {
   renderComponent(
       container,
-      `<div class="card__hashtag">
-        <div class="card__hashtag-list"></div>
+      `<div class="card__settings">
+        <div class="card__details"></div>
       </div>`
+  );
+  const cardDetails = container.querySelector(`.card__details`);
+  renderCardDates(cardDetails, obj);
+  renderHashtags(cardDetails, obj.hashtags);
+};
+
+const renderCard = function (container, obj) {
+  renderComponent(
+      container,
+      `<article
+        class="
+          card
+          card--${obj.color ? obj.color : `black`}
+          ${obj.repeat ? ` card--repeat` : ``}
+          ${obj.deadline ? ` card--deadline` : ``}
+        ">
+        <div class="card__form">
+          <div class="card__inner"></div>
+        </div>
+      </article>`
+  );
+  const cards = container.querySelectorAll(`.card`);
+  const card = cards[cards.length - 1];
+  const cardInner = card.querySelector(`.card__inner`);
+  renderCardControl(cardInner, CARD_CONTROLS);
+  renderComponent(
+      cardInner,
+      `<div class="card__color-bar">
+        <svg class="card__color-bar-wave" width="100%" height="10">
+          <use xlink:href="#wave"></use>
+        </svg>
+      </div>`
+  );
+  getCardText(cardInner, obj.text);
+  renderCardDetails(cardInner, obj);
+};
+
+const renderEditCard = function (container) {
+  renderComponent(
+      container,
+      `<article class="card card--edit card--black">
+      <form class="card__form" method="get">
+        <div class="card__inner"></div>
+      </form>
+      </article>`
+  );
+  const cardEdit = container.querySelector(`.card--edit .card__inner`);
+  renderCardControl(cardEdit, CARD_CONTROLS.slice(1));
+  renderComponent(
+      cardEdit,
+      `<div class="card__color-bar">
+        <svg class="card__color-bar-wave" width="100%" height="10">
+          <use xlink:href="#wave"></use>
+        </svg>
+      </div>
+
+      <div class="card__textarea-wrap">
+        <label>
+          <textarea
+            class="card__text"
+            placeholder="Start typing your text here..."
+            name="text"
+          >This is example of new task, you can add picture, set date and time, add tags.</textarea>
+        </label>
+      </div>
+
+      <div class="card__settings">
+        <div class="card__details">
+          <div class="card__dates">
+            <button class="card__date-deadline-toggle" type="button">
+              date: <span class="card__date-status">no</span>
+            </button>
+
+            <fieldset class="card__date-deadline" disabled>
+              <label class="card__input-deadline-wrap">
+                <input
+                  class="card__date"
+                  type="text"
+                  placeholder="23 September"
+                  name="date"
+                />
+              </label>
+            </fieldset>
+
+            <button class="card__repeat-toggle" type="button">
+              repeat:<span class="card__repeat-status">no</span>
+            </button>
+
+            <fieldset class="card__repeat-days" disabled>
+              <div class="card__repeat-days-inner">
+                <input
+                  class="visually-hidden card__repeat-day-input"
+                  type="checkbox"
+                  id="repeat-mo-1"
+                  name="repeat"
+                  value="mo"
+                />
+                <label class="card__repeat-day" for="repeat-mo-1"
+                  >mo</label
+                >
+                <input
+                  class="visually-hidden card__repeat-day-input"
+                  type="checkbox"
+                  id="repeat-tu-1"
+                  name="repeat"
+                  value="tu"
+                  checked
+                />
+                <label class="card__repeat-day" for="repeat-tu-1"
+                  >tu</label
+                >
+                <input
+                  class="visually-hidden card__repeat-day-input"
+                  type="checkbox"
+                  id="repeat-we-1"
+                  name="repeat"
+                  value="we"
+                />
+                <label class="card__repeat-day" for="repeat-we-1"
+                  >we</label
+                >
+                <input
+                  class="visually-hidden card__repeat-day-input"
+                  type="checkbox"
+                  id="repeat-th-1"
+                  name="repeat"
+                  value="th"
+                />
+                <label class="card__repeat-day" for="repeat-th-1"
+                  >th</label
+                >
+                <input
+                  class="visually-hidden card__repeat-day-input"
+                  type="checkbox"
+                  id="repeat-fr-1"
+                  name="repeat"
+                  value="fr"
+                  checked
+                />
+                <label class="card__repeat-day" for="repeat-fr-1"
+                  >fr</label
+                >
+                <input
+                  class="visually-hidden card__repeat-day-input"
+                  type="checkbox"
+                  name="repeat"
+                  value="sa"
+                  id="repeat-sa-1"
+                />
+                <label class="card__repeat-day" for="repeat-sa-1"
+                  >sa</label
+                >
+                <input
+                  class="visually-hidden card__repeat-day-input"
+                  type="checkbox"
+                  id="repeat-su-1"
+                  name="repeat"
+                  value="su"
+                  checked
+                />
+                <label class="card__repeat-day" for="repeat-su-1"
+                  >su</label
+                >
+              </div>
+            </fieldset>
+          </div>
+
+          <div class="card__hashtag">
+            <div class="card__hashtag-list"></div>
+
+            <label>
+              <input
+                type="text"
+                class="card__hashtag-input"
+                name="hashtag-input"
+                placeholder="Type new hashtag here"
+              />
+            </label>
+          </div>
+        </div>
+
+        <div class="card__colors-inner">
+          <h3 class="card__colors-title">Color</h3>
+          <div class="card__colors-wrap">
+            <input
+              type="radio"
+              id="color-black-1"
+              class="card__color-input card__color-input--black visually-hidden"
+              name="color"
+              value="black"
+              checked
+            />
+            <label
+              for="color-black-1"
+              class="card__color card__color--black"
+              >black</label
+            >
+            <input
+              type="radio"
+              id="color-yellow-1"
+              class="card__color-input card__color-input--yellow visually-hidden"
+              name="color"
+              value="yellow"
+            />
+            <label
+              for="color-yellow-1"
+              class="card__color card__color--yellow"
+              >yellow</label
+            >
+            <input
+              type="radio"
+              id="color-blue-1"
+              class="card__color-input card__color-input--blue visually-hidden"
+              name="color"
+              value="blue"
+            />
+            <label
+              for="color-blue-1"
+              class="card__color card__color--blue"
+              >blue</label
+            >
+            <input
+              type="radio"
+              id="color-green-1"
+              class="card__color-input card__color-input--green visually-hidden"
+              name="color"
+              value="green"
+            />
+            <label
+              for="color-green-1"
+              class="card__color card__color--green"
+              >green</label
+            >
+            <input
+              type="radio"
+              id="color-pink-1"
+              class="card__color-input card__color-input--pink visually-hidden"
+              name="color"
+              value="pink"
+            />
+            <label
+              for="color-pink-1"
+              class="card__color card__color--pink"
+              >pink</label
+            >
+          </div>
+        </div>
+      </div>
+
+      <div class="card__status-btns">
+        <button class="card__save" type="submit">save</button>
+        <button class="card__delete" type="button">delete</button>
+      </div>
+    </div>`
   );
 };
 
-const getCard = function (board, obj) {
+const renderBoardTasks = function (container) {
   renderComponent(
-      board,
-      `<article class="card card--${obj.color}></article>`
+      container,
+      `<div class="board__tasks"></div>`
   );
-  const cards = board.querySelectorAll(`.card`);
-  const card = cards[cards.length - 1];
-  renderComponent(
-      card,
-      `<div class="card__form">
-        <div class="card__inner"></div>
-      </div>`
+  const boardTasks = container.querySelector(`.board__tasks`);
+  renderEditCard(boardTasks);
+  CardsData.slice(0, 3).forEach(
+      (it) => renderCard(boardTasks, it)
   );
-  const cardInner = card.querySelector(cardInner);
-  getCardControl(cardInner);
 };
 
 const getLoadMoreButton = function () {
@@ -180,19 +528,19 @@ const getLoadMoreButton = function () {
   `;
 };
 
-const getBoard = function () {
+const renderBoard = function () {
   renderComponent(
       main,
       `<section class="board container"></section>`
   );
-  const boardContainer = document.querySelector(`.board`);
+  const boardContainer = main.querySelector(`.board`);
 
-  getBoardFilterList(boardContainer);
-
+  renderBoardFilterList(boardContainer);
+  renderBoardTasks(boardContainer);
   renderComponent(boardContainer, getLoadMoreButton());
 };
 
-getControlElements();
-getSearchElement();
-getFilterElements();
-getBoard();
+renderControlElements();
+renderComponent(main, getSearchElement());
+renderFilterElements();
+renderBoard();
