@@ -1,21 +1,51 @@
 "use strict";
 const CONTROLS = [
-  [`new-task`, `+ add new task`],
-  [`task`, `tasks`, true],
-  [`statistic`, `statisticts`]
+  {
+    caption: `new-task`,
+    text: `+ add new task`
+  },
+  {
+    caption: `task`,
+    text: `tasks`,
+    checked: true},
+  {
+    caption: `statistic`,
+    text: `statisticts`}
 ];
 const FILTERS = [
-  [`All`, 13, true],
-  [`Overdue`, 0],
-  [`Today`, 0],
-  [`Favorites`, 1],
-  [`Repeating`, 1],
-  [`Tags`, 1],
-  [`Archive`, 115]
+  {
+    caption: `All`,
+    value: 13,
+    checked: true
+  },
+  {
+    caption: `Overdue`,
+    value: 0
+  },
+  {
+    caption: `Today`,
+    value: 0,
+  },
+  {
+    caption: `Favorites`,
+    value: 1
+  },
+  {
+    caption: `Repeating`,
+    value: 1
+  },
+  {
+    caption: `Tags`,
+    value: 1
+  },
+  {
+    caption: `Archive`,
+    value: 115
+  }
 ];
 const BOARD_FILTERS = [`SORT BY DEFAULT`, `SORT BY DATE up`, `SORT BY DATE down`];
 const CARD_CONTROLS = [`edit`, `archive`, `favorites`];
-const CardsData = [
+const CARDS_DATA = [
   {
     text: `Example default task with default color.`,
     date: `23 September`,
@@ -96,7 +126,7 @@ const renderControlElements = function () {
   );
   const controlsWrap = controlContainer.querySelector(`.control__btn-wrap`);
   CONTROLS.forEach(
-      (it) => renderComponent(controlsWrap, getControlElement(...it))
+      (it) => renderComponent(controlsWrap, getControlElement(it.caption, it.text, it.checked))
   );
 };
 
@@ -138,7 +168,7 @@ const renderFilterElements = function () {
   );
   const filterContainer = main.querySelector(`.main__filter`);
   FILTERS.forEach(
-      (it) => renderComponent(filterContainer, getFilterElement(...it))
+      (it) => renderComponent(filterContainer, getFilterElement(it.caption, it.value, it.checked))
   );
 };
 
@@ -517,7 +547,7 @@ const renderBoardTasks = function (container) {
   );
   const boardTasks = container.querySelector(`.board__tasks`);
   renderEditCard(boardTasks);
-  CardsData.slice(0, 3).forEach(
+  CARDS_DATA.slice(0, 3).forEach(
       (it) => renderCard(boardTasks, it)
   );
 };
