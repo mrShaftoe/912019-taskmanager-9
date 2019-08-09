@@ -86,12 +86,35 @@
 /************************************************************************/
 /******/ ({
 
+/***/ "./src/components/render.js":
+/*!**********************************!*\
+  !*** ./src/components/render.js ***!
+  \**********************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+const renderComponent = function (container, html) {
+  container.insertAdjacentHTML(`beforeend`, html);
+};
+
+/* harmony default export */ __webpack_exports__["default"] = (renderComponent);
+
+
+/***/ }),
+
 /***/ "./src/main.js":
 /*!*********************!*\
   !*** ./src/main.js ***!
   \*********************/
-/*! no static exports found */
-/***/ (function(module, exports) {
+/*! no exports provided */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _src_components_render_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../src/components/render.js */ "./src/components/render.js");
+
 
 const CONTROLS = [
   {
@@ -193,10 +216,6 @@ const CARDS_DATA = [
 const main = document.querySelector(`.main`);
 const controlContainer = main.querySelector(`.main__control`);
 
-const renderComponent = function (container, html) {
-  container.insertAdjacentHTML(`beforeend`, html);
-};
-
 const getControlElement = function (caption, text, isChecked = false) {
   return `
     <input
@@ -214,13 +233,13 @@ const getControlElement = function (caption, text, isChecked = false) {
 };
 
 const renderControlElements = function () {
-  renderComponent(
+  Object(_src_components_render_js__WEBPACK_IMPORTED_MODULE_0__["default"])(
       controlContainer,
       `<section class="control__btn-wrap"></section>`
   );
   const controlsWrap = controlContainer.querySelector(`.control__btn-wrap`);
   CONTROLS.forEach(
-      (it) => renderComponent(controlsWrap, getControlElement(it.caption, it.text, it.checked))
+      (it) => Object(_src_components_render_js__WEBPACK_IMPORTED_MODULE_0__["default"])(controlsWrap, getControlElement(it.caption, it.text, it.checked))
   );
 };
 
@@ -256,13 +275,13 @@ const getFilterElement = function (caption, count, isChecked = false) {
 };
 
 const renderFilterElements = function () {
-  renderComponent(
+  Object(_src_components_render_js__WEBPACK_IMPORTED_MODULE_0__["default"])(
       main,
       `<section class="main__filter filter container"></section>`
   );
   const filterContainer = main.querySelector(`.main__filter`);
   FILTERS.forEach(
-      (it) => renderComponent(filterContainer, getFilterElement(it.caption, it.value, it.checked))
+      (it) => Object(_src_components_render_js__WEBPACK_IMPORTED_MODULE_0__["default"])(filterContainer, getFilterElement(it.caption, it.value, it.checked))
   );
 };
 
@@ -271,13 +290,13 @@ const getBoardFilter = function (caption) {
 };
 
 const renderBoardFilterList = function (board) {
-  renderComponent(
+  Object(_src_components_render_js__WEBPACK_IMPORTED_MODULE_0__["default"])(
       board,
       `<div class="board__filter-list"></div>`
   );
   const boardFilterList = board.querySelector(`.board__filter-list`);
   BOARD_FILTERS.forEach(
-      (it) => renderComponent(boardFilterList, getBoardFilter(it))
+      (it) => Object(_src_components_render_js__WEBPACK_IMPORTED_MODULE_0__["default"])(boardFilterList, getBoardFilter(it))
   );
 };
 
@@ -295,15 +314,15 @@ const getCardControlButton = function (caption) {
 };
 
 const renderCardControl = function (container, controls) {
-  renderComponent(container, `<div class="card__control"></div>`);
+  Object(_src_components_render_js__WEBPACK_IMPORTED_MODULE_0__["default"])(container, `<div class="card__control"></div>`);
   const cardControl = container.querySelector(`.card__control`);
   controls.forEach(
-      (it) => renderComponent(cardControl, getCardControlButton(it))
+      (it) => Object(_src_components_render_js__WEBPACK_IMPORTED_MODULE_0__["default"])(cardControl, getCardControlButton(it))
   );
 };
 
 const getCardText = function (container, text) {
-  renderComponent(
+  Object(_src_components_render_js__WEBPACK_IMPORTED_MODULE_0__["default"])(
       container,
       `<div class="card__textarea-wrap">
         <p class="card__text">${text}</p>
@@ -323,7 +342,7 @@ const getHashtag = function (name) {
 
 const renderHashtags = function (container, hashtags) {
   if (hashtags) {
-    renderComponent(
+    Object(_src_components_render_js__WEBPACK_IMPORTED_MODULE_0__["default"])(
         container,
         `<div class="card__hashtag">
           <div class="card__hashtag-list"></div>
@@ -331,7 +350,7 @@ const renderHashtags = function (container, hashtags) {
     );
     const hastagsList = container.querySelector(`.card__hashtag-list`);
     hashtags.forEach(
-        (it) => renderComponent(hastagsList, getHashtag(it))
+        (it) => Object(_src_components_render_js__WEBPACK_IMPORTED_MODULE_0__["default"])(hastagsList, getHashtag(it))
     );
   }
 };
@@ -344,7 +363,7 @@ const getDateTime = function (type, value) {
 
 const renderCardDates = function (container, obj) {
   if (obj.date || obj.time) {
-    renderComponent(
+    Object(_src_components_render_js__WEBPACK_IMPORTED_MODULE_0__["default"])(
         container,
         `<div class="card__dates">
           <div class="card__date-deadline">
@@ -356,14 +375,14 @@ const renderCardDates = function (container, obj) {
   const cardInput = container.querySelector(`.card__input-deadline-wrap`);
 
   if (obj.date) {
-    renderComponent(
+    Object(_src_components_render_js__WEBPACK_IMPORTED_MODULE_0__["default"])(
         cardInput,
         getDateTime(`date`, obj.date)
     );
   }
 
   if (obj.time) {
-    renderComponent(
+    Object(_src_components_render_js__WEBPACK_IMPORTED_MODULE_0__["default"])(
         cardInput,
         getDateTime(`time`, obj.time)
     );
@@ -372,7 +391,7 @@ const renderCardDates = function (container, obj) {
 
 
 const renderCardDetails = function (container, obj) {
-  renderComponent(
+  Object(_src_components_render_js__WEBPACK_IMPORTED_MODULE_0__["default"])(
       container,
       `<div class="card__settings">
         <div class="card__details"></div>
@@ -384,7 +403,7 @@ const renderCardDetails = function (container, obj) {
 };
 
 const renderCard = function (container, obj) {
-  renderComponent(
+  Object(_src_components_render_js__WEBPACK_IMPORTED_MODULE_0__["default"])(
       container,
       `<article
         class="
@@ -402,7 +421,7 @@ const renderCard = function (container, obj) {
   const card = cards[cards.length - 1];
   const cardInner = card.querySelector(`.card__inner`);
   renderCardControl(cardInner, CARD_CONTROLS);
-  renderComponent(
+  Object(_src_components_render_js__WEBPACK_IMPORTED_MODULE_0__["default"])(
       cardInner,
       `<div class="card__color-bar">
         <svg class="card__color-bar-wave" width="100%" height="10">
@@ -415,7 +434,7 @@ const renderCard = function (container, obj) {
 };
 
 const renderEditCard = function (container) {
-  renderComponent(
+  Object(_src_components_render_js__WEBPACK_IMPORTED_MODULE_0__["default"])(
       container,
       `<article class="card card--edit card--black">
       <form class="card__form" method="get">
@@ -425,7 +444,7 @@ const renderEditCard = function (container) {
   );
   const cardEdit = container.querySelector(`.card--edit .card__inner`);
   renderCardControl(cardEdit, CARD_CONTROLS.slice(1));
-  renderComponent(
+  Object(_src_components_render_js__WEBPACK_IMPORTED_MODULE_0__["default"])(
       cardEdit,
       `<div class="card__color-bar">
         <svg class="card__color-bar-wave" width="100%" height="10">
@@ -635,7 +654,7 @@ const renderEditCard = function (container) {
 };
 
 const renderBoardTasks = function (container) {
-  renderComponent(
+  Object(_src_components_render_js__WEBPACK_IMPORTED_MODULE_0__["default"])(
       container,
       `<div class="board__tasks"></div>`
   );
@@ -653,7 +672,7 @@ const getLoadMoreButton = function () {
 };
 
 const renderBoard = function () {
-  renderComponent(
+  Object(_src_components_render_js__WEBPACK_IMPORTED_MODULE_0__["default"])(
       main,
       `<section class="board container"></section>`
   );
@@ -661,11 +680,11 @@ const renderBoard = function () {
 
   renderBoardFilterList(boardContainer);
   renderBoardTasks(boardContainer);
-  renderComponent(boardContainer, getLoadMoreButton());
+  Object(_src_components_render_js__WEBPACK_IMPORTED_MODULE_0__["default"])(boardContainer, getLoadMoreButton());
 };
 
 renderControlElements();
-renderComponent(main, getSearchElement());
+Object(_src_components_render_js__WEBPACK_IMPORTED_MODULE_0__["default"])(main, getSearchElement());
 renderFilterElements();
 renderBoard();
 
