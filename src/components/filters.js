@@ -51,9 +51,9 @@ const getFilterElement = function (caption, count, isChecked = false) {
 const renderFilterElements = function (container) {
   renderComponent(
       container,
-      `<section class="container__filter filter container"></section>`
+      `<section class="main__filter filter container"></section>`
   );
-  const filterContainer = container.querySelector(`.container__filter`);
+  const filterContainer = container.querySelector(`.main__filter`);
   FILTERS.forEach(
       (it) => renderComponent(filterContainer, getFilterElement(it.caption, it.value, it.checked))
   );

@@ -1,6 +1,6 @@
 const getSearchElement = function () {
   return `
-      <section class="container__search search container">
+      <section class="main__search search container">
         <input
           type="text"
           id="search__input"
