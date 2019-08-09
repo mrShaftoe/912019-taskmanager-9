@@ -1,4 +1,4 @@
-import renderComponent from '../render.js';
+import renderComponent from '../render';
 
 const BOARD_FILTERS = [`SORT BY DEFAULT`, `SORT BY DATE up`, `SORT BY DATE down`];
 

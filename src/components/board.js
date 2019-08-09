@@ -1,7 +1,7 @@
-import renderComponent from './render.js';
-import {renderFilterList} from './board/filters.js';
-import {renderTasks} from './board/tasks.js';
-import {getLoadMoreButton} from './board/loadmorebutton.js';
+import renderComponent from './render';
+import {renderFilterList} from './board/filters';
+import {renderTasks} from './board/tasks';
+import {getLoadMoreButton} from './board/loadmorebutton';
 
 const renderBoard = function (container) {
   renderComponent(

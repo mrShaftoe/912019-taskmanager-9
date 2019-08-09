@@ -1,4 +1,4 @@
-import renderComponent from '../render.js';
+import renderComponent from '../render';
 
 const CARD_CONTROLS = [`edit`, `archive`, `favorites`];
 

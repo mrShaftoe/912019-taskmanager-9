@@ -1,4 +1,4 @@
-import renderComponent from '../render.js';
+import renderComponent from '../render';
 import {renderCard, renderEditCard} from './cards';
 
 const TASKS_DATA = [
