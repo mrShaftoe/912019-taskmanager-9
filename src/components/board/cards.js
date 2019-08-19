@@ -59,41 +59,44 @@ const renderHashtags = function (container, hashtags) {
 };
 
 const getDateTime = function (type, value) {
+  const dateTime = type === `date` ?
+    new Date(value).toLocaleDateString(`en`, {day: `numeric`, month: `long`}).toUpperCase().split(` `).reverse().join(` `) :
+    (new Date(value).toLocaleTimeString(`en`, {hour12: false, hours: `2-digit`, minutes: `2-digit`})).split(`:`).slice(0, 2).join(`:`);
   return `
-    <span class="card__${type.toLowerCase()}">${value}</span>
+    <span class="card__${type.toLowerCase()}">${dateTime}</span>
   `;
 };
 
-const renderCardDates = function (container, obj) {
-  if (obj.date || obj.time) {
-    renderComponent(
-        container,
-        `<div class="card__dates">
-          <div class="card__date-deadline">
-            <p class="card__input-deadline-wrap"></p>
-          </div>
-        </div>`
-    );
+const renderCardDates = function (container, dueDate) {
+  if (!dueDate) {
+    return;
   }
+  renderComponent(
+      container,
+      `<div class="card__dates">
+        <div class="card__date-deadline">
+          <p class="card__input-deadline-wrap"></p>
+        </div>
+      </div>`
+  );
   const cardInput = container.querySelector(`.card__input-deadline-wrap`);
 
-  if (obj.date) {
+
+  if (dueDate) {
     renderComponent(
         cardInput,
-        getDateTime(`date`, obj.date)
+        getDateTime(`date`, dueDate)
+    );
+    renderComponent(
+        cardInput,
+        getDateTime(`time`, dueDate)
     );
   }
 
-  if (obj.time) {
-    renderComponent(
-        cardInput,
-        getDateTime(`time`, obj.time)
-    );
-  }
 };
 
 
-const renderCardDetails = function (container, obj) {
+const renderCardDetails = function (container, dueDate, hashtags) {
   renderComponent(
       container,
       `<div class="card__settings">
@@ -101,19 +104,19 @@ const renderCardDetails = function (container, obj) {
       </div>`
   );
   const cardDetails = container.querySelector(`.card__details`);
-  renderCardDates(cardDetails, obj);
-  renderHashtags(cardDetails, obj.hashtags);
+  renderCardDates(cardDetails, dueDate);
+  renderHashtags(cardDetails, hashtags);
 };
 
-const renderCard = function (container, obj) {
+const renderCard = function (container, {description, color, dueDate, repeatingDays, hashtags}) {
   renderComponent(
       container,
       `<article
         class="
           card
-          card--${obj.color ? obj.color : `black`}
-          ${obj.repeat ? ` card--repeat` : ``}
-          ${obj.deadline ? ` card--deadline` : ``}
+          card--${color}
+          ${Object.keys(repeatingDays).some((it) => repeatingDays[it]) ? ` card--repeat` : ``}
+          ${dueDate <= Date.now() ? ` card--deadline` : ``}
         ">
         <div class="card__form">
           <div class="card__inner"></div>
@@ -132,11 +135,11 @@ const renderCard = function (container, obj) {
         </svg>
       </div>`
   );
-  getCardText(cardInner, obj.text);
-  renderCardDetails(cardInner, obj);
+  getCardText(cardInner, description);
+  renderCardDetails(cardInner, dueDate, hashtags);
 };
 
-const renderEditCard = function (container) {
+const renderEditCard = function (container, {description, dueDate, repeatingDays}) {
   renderComponent(
       container,
       `<article class="card card--edit card--black">
@@ -146,6 +149,7 @@ const renderEditCard = function (container) {
       </article>`
   );
   const cardEdit = container.querySelector(`.card--edit .card__inner`);
+  const isRepeating = Object.keys(repeatingDays).some((it) => repeatingDays[it]);
   renderCardControl(cardEdit, CARD_CONTROLS.slice(1));
   renderComponent(
       cardEdit,
@@ -161,7 +165,7 @@ const renderEditCard = function (container) {
             class="card__text"
             placeholder="Start typing your text here..."
             name="text"
-          >This is example of new task, you can add picture, set date and time, add tags.</textarea>
+          >${description}</textarea>
         </label>
       </div>
 
@@ -169,10 +173,10 @@ const renderEditCard = function (container) {
         <div class="card__details">
           <div class="card__dates">
             <button class="card__date-deadline-toggle" type="button">
-              date: <span class="card__date-status">no</span>
+              date: <span class="card__date-status">${dueDate ? `yes` : `no`}</span>
             </button>
 
-            <fieldset class="card__date-deadline" disabled>
+            <fieldset class="card__date-deadline" ${dueDate ? `` : `disabled`}>
               <label class="card__input-deadline-wrap">
                 <input
                   class="card__date"
@@ -184,10 +188,10 @@ const renderEditCard = function (container) {
             </fieldset>
 
             <button class="card__repeat-toggle" type="button">
-              repeat:<span class="card__repeat-status">no</span>
+              repeat:<span class="card__repeat-status">${isRepeating ? `yes` : `no`}</span>
             </button>
 
-            <fieldset class="card__repeat-days" disabled>
+            <fieldset class="card__repeat-days" ${isRepeating ? `` : `disabled`}>
               <div class="card__repeat-days-inner">
                 <input
                   class="visually-hidden card__repeat-day-input"

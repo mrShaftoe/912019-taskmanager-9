@@ -7,8 +7,8 @@ const getFilter = function (caption) {
 };
 
 const renderFilterList = function (container) {
-  renderComponent(
-      container,
+  container.insertAdjacentHTML(
+      `afterbegin`,
       `<div class="board__filter-list"></div>`
   );
   const boardFilterList = container.querySelector(`.board__filter-list`);

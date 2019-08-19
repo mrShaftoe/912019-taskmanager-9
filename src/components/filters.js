@@ -2,32 +2,74 @@ import renderComponent from './render';
 const FILTERS = [
   {
     caption: `All`,
-    value: 13,
-    checked: true
+    set value(data) {
+      this.filterValue = data.length;
+    },
+    get value() {
+      return this.filterValue;
+    },
+    checked: true,
   },
   {
     caption: `Overdue`,
-    value: 0
+    set value(data) {
+      this.filterValue = data.filter((it) => it.dueDate < Date.now()).length;
+    },
+    get value() {
+      return this.filterValue;
+    },
   },
   {
     caption: `Today`,
-    value: 0,
+    set value(data) {
+      const now = new Date();
+      const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      this.filterValue = data.filter(({dueDate}) => {
+        const newDate = new Date(dueDate);
+        return today === new Date(newDate.getFullYear(), newDate.getMonth(), newDate.getDate());
+      }).length;
+    },
+    get value() {
+      return this.filterValue;
+    },
   },
   {
     caption: `Favorites`,
-    value: 1
+    set value(data) {
+      this.filterValue = data.filter(({isFavorite}) => isFavorite).length;
+    },
+    get value() {
+      return this.filterValue;
+    },
   },
   {
     caption: `Repeating`,
-    value: 1
+    set value(data) {
+      this.filterValue = data.filter(({repeatingDays}) => {
+        return Object.keys(repeatingDays).some((it) => repeatingDays[it]);
+      }).length;
+    },
+    get value() {
+      return this.filterValue;
+    },
   },
   {
     caption: `Tags`,
-    value: 1
+    set value(data) {
+      this.filterValue = data.filter(({hashtags}) => hashtags.size).length;
+    },
+    get value() {
+      return this.filterValue;
+    },
   },
   {
     caption: `Archive`,
-    value: 115
+    set value(data) {
+      this.filterValue = data.filter(({isArchive}) => isArchive).length;
+    },
+    get value() {
+      return this.filterValue;
+    },
   }
 ];
 
@@ -48,7 +90,10 @@ const getFilterElement = function (caption, count, isChecked = false) {
   `;
 };
 
-const renderFilterElements = function (container) {
+const renderFilterElements = function (container, data) {
+  FILTERS.forEach((it) => {
+    it.value = data;
+  });
   renderComponent(
       container,
       `<section class="main__filter filter container"></section>`
