@@ -17,27 +17,25 @@ renderControlElements(main);
 renderComponent(main, getSearchElement());
 renderFilterElements(main, tasks);
 renderBoard(main, tasks);
+let renderedCardsCount = 8;
 
 const loadMoreButton = main.querySelector(`.load-more`);
 const boardTasks = main.querySelector(`.board__tasks`);
 
 loadMoreButton.addEventListener(`click`, function (evt) {
   evt.preventDefault();
-  const renderedTasks = boardTasks.querySelectorAll(`.card`);
-  if (!renderedTasks) {
-    loadMoreButton.remove();
-    return;
-  }
-  const startIndex = renderedTasks.length;
-  const endIndex = (startIndex + CARD_SHOWN_ONCE) < tasks.length ? startIndex + CARD_SHOWN_ONCE : tasks.length - 1;
+
+  const startIndex = renderedCardsCount;
   if (startIndex >= tasks.length) {
     loadMoreButton.remove();
     return;
   }
+  const endIndex = (startIndex + CARD_SHOWN_ONCE) < tasks.length ? startIndex + CARD_SHOWN_ONCE : tasks.length;
 
   if (endIndex >= tasks.length - 1) {
     loadMoreButton.remove();
   }
 
   renderTasks(boardTasks, tasks.slice(startIndex, endIndex));
+  renderedCardsCount += endIndex - startIndex;
 });

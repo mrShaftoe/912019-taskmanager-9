@@ -2,73 +2,52 @@ import renderComponent from './render';
 const FILTERS = [
   {
     caption: `All`,
-    set value(data) {
-      this.filterValue = data.length;
-    },
-    get value() {
-      return this.filterValue;
+    filter(it) {
+      return it;
     },
     checked: true,
   },
   {
     caption: `Overdue`,
-    set value(data) {
-      this.filterValue = data.filter((it) => it.dueDate < Date.now()).length;
-    },
-    get value() {
-      return this.filterValue;
-    },
+    filter({dueDate}) {
+      return dueDate < Date.now();
+    }
   },
   {
     caption: `Today`,
-    set value(data) {
+    filter({dueDate}) {
       const now = new Date();
       const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-      this.filterValue = data.filter(({dueDate}) => {
-        const newDate = new Date(dueDate);
-        return today === new Date(newDate.getFullYear(), newDate.getMonth(), newDate.getDate());
-      }).length;
-    },
-    get value() {
-      return this.filterValue;
-    },
+      const newDate = new Date(dueDate);
+      const taskDate = new Date(newDate.getFullYear(), newDate.getMonth(), newDate.getDate());
+      return today.toString() === taskDate.toString();
+    }
+
   },
   {
     caption: `Favorites`,
-    set value(data) {
-      this.filterValue = data.filter(({isFavorite}) => isFavorite).length;
+    filter({isFavorite}) {
+      return isFavorite;
     },
-    get value() {
-      return this.filterValue;
-    },
+
   },
   {
     caption: `Repeating`,
-    set value(data) {
-      this.filterValue = data.filter(({repeatingDays}) => {
-        return Object.keys(repeatingDays).some((it) => repeatingDays[it]);
-      }).length;
+    filter({repeatingDays}) {
+      return Object.keys(repeatingDays).some((it) => repeatingDays[it]);
     },
-    get value() {
-      return this.filterValue;
-    },
+
   },
   {
     caption: `Tags`,
-    set value(data) {
-      this.filterValue = data.filter(({hashtags}) => hashtags.size).length;
-    },
-    get value() {
-      return this.filterValue;
+    filter({hashtags}) {
+      return hashtags.size;
     },
   },
   {
     caption: `Archive`,
-    set value(data) {
-      this.filterValue = data.filter(({isArchive}) => isArchive).length;
-    },
-    get value() {
-      return this.filterValue;
+    filter({isArchive}) {
+      return isArchive;
     },
   }
 ];
@@ -90,17 +69,17 @@ const getFilterElement = function (caption, count, isChecked = false) {
   `;
 };
 
-const renderFilterElements = function (container, data) {
-  FILTERS.forEach((it) => {
-    it.value = data;
-  });
+const renderFilterElements = function (container, tasksData) {
   renderComponent(
       container,
       `<section class="main__filter filter container"></section>`
   );
   const filterContainer = container.querySelector(`.main__filter`);
   FILTERS.forEach(
-      (it) => renderComponent(filterContainer, getFilterElement(it.caption, it.value, it.checked))
+      (it) => {
+        it.value = tasksData.filter(it.filter).length;
+        renderComponent(filterContainer, getFilterElement(it.caption, it.value, it.checked));
+      }
   );
 };
 
