@@ -1,6 +1,7 @@
 import renderComponent from '../src/components/render';
 import {renderControlElements} from '../src/components/control';
 import {getSearchElement} from '../src/components/search';
+import {getFiltersData} from '../src/components/filtersdata';
 import {renderFilterElements} from '../src/components/filters';
 import {renderBoard} from '../src/components/board';
 import {renderTasks} from '../src/components/board/tasks';
@@ -15,7 +16,7 @@ for (let i = 0; i < 30; i++) {
 
 renderControlElements(main);
 renderComponent(main, getSearchElement());
-renderFilterElements(main, tasks);
+renderFilterElements(main, getFiltersData(tasks));
 renderBoard(main, tasks);
 let renderedCardsCount = 8;
 
