@@ -9,10 +9,7 @@ import {getTask} from './components/data.js';
 
 const CARD_SHOWN_ONCE = 8;
 const main = document.querySelector(`.main`);
-const tasks = [];
-for (let i = 0; i < 30; i++) {
-  tasks.push(getTask());
-}
+const tasks = Array.from({length: 30}, getTask);
 
 renderControlElements(main);
 renderComponent(main, getSearchElement());

@@ -1,4 +1,5 @@
-import {getRandomInt} from '../utils';
+import {getRandomInt, getShuffledArray} from '../utils';
+
 const MS_IN_DAY = 24 * 60 * 60 * 1000;
 const DESCRIPTIONS = [
   `Изучить теорию`,
@@ -8,15 +9,7 @@ const DESCRIPTIONS = [
 const COLORS = [`black`, `yellow`, `blue`, `green`, `pink`];
 const HASHTAGS_LIST = [`homework`, `theory`, `practice`, `intensive`, `keks`];
 const MAX_HASHTAGS = 3;
-const getHashtags = function () {
-  const shuffled = [];
-  for (let i = 0; i < HASHTAGS_LIST.length; i++) {
-    const j = getRandomInt(i);
-    shuffled[i] = shuffled[j];
-    shuffled[j] = HASHTAGS_LIST[i];
-  }
-  return shuffled.slice(0, getRandomInt(MAX_HASHTAGS));
-};
+
 
 const getTask = function () {
   return {
@@ -25,16 +18,16 @@ const getTask = function () {
     dueDate: Date.now() + 1 + getRandomInt(7, -7) * MS_IN_DAY,
 
     repeatingDays: {
-      mo: false,
-      tu: false,
-      we: false,
-      th: Boolean(Math.round(Math.random())),
-      fr: false,
-      sa: false,
-      su: false,
+      Mo: false,
+      Tu: false,
+      We: false,
+      Th: Boolean(Math.round(Math.random())),
+      Fr: false,
+      Sa: false,
+      Su: false,
     },
 
-    hashtags: new Set(getHashtags()),
+    hashtags: getShuffledArray(HASHTAGS_LIST).slice(0, getRandomInt(MAX_HASHTAGS)),
 
     color: COLORS[getRandomInt(COLORS.length)],
 

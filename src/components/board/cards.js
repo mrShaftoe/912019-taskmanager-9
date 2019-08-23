@@ -144,12 +144,12 @@ const getRepeatingDay = function (dayName, isRepeating) {
     <input
       class="visually-hidden card__repeat-day-input"
         type="checkbox"
-        id="repeat-${dayName}-1"
+        id="repeat-${dayName.toLowerCase()}-1"
         name="repeat"
-        value="${dayName}"
+        value="${dayName.toLowerCase()}"
         ${isRepeating ? `checked` : ``}
       />
-      <label class="card__repeat-day" for="repeat-${dayName}-1"
+      <label class="card__repeat-day" for="repeat-${dayName.toLowerCase()}-1"
         >${dayName}</label
       >`;
 };
@@ -158,7 +158,7 @@ const getRepeatingDays = function (repeatingDays) {
   return Object.keys(repeatingDays).map((it) => getRepeatingDay(it, repeatingDays[it])).join(``);
 };
 
-const getColor = function (color, checkedColor) {
+const getColor = function (color, isChecked) {
   return `
     <input
       type="radio"
@@ -166,7 +166,7 @@ const getColor = function (color, checkedColor) {
       class="card__color-input card__color-input--${color} visually-hidden"
       name="color"
       value="${color}"
-      ${color === checkedColor ? `checked` : ``}
+      ${isChecked ? `checked` : ``}
     />
     <label
       for="color-${color}-1"
@@ -251,7 +251,7 @@ const renderEditCard = function (container, {description, dueDate, repeatingDays
         <div class="card__colors-inner">
           <h3 class="card__colors-title">Color</h3>
           <div class="card__colors-wrap">
-            ${COLORS.map((it) => getColor(it, color)).join(` `)}
+            ${COLORS.map((it) => getColor(it, it === color)).join(` `)}
           </div>
         </div>
       </div>
