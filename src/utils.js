@@ -1,3 +1,31 @@
+const Position = {
+  AFTERBEGIN: `afterbegin`,
+  BEFOREEND: `beforeend`
+};
+
+const createElement = (template) => {
+  const newElement = document.createElement(`div`);
+  newElement.innerHTML = template;
+  return newElement.firstChild;
+};
+
+const render = (container, element, place) => {
+  switch (place) {
+    case Position.AFTERBEGIN:
+      container.prepend(element);
+      break;
+    case Position.BEFOREEND:
+      container.append(element);
+      break;
+  }
+};
+
+const unrender = (element) => {
+  if (element) {
+    element.remove();
+  }
+};
+
 const getRandomInt = function (max, min = 0) {
   return Math.floor(Math.random() * (max - min)) + min;
 };
@@ -11,4 +39,4 @@ const getShuffledArray = function (arr) {
   return shuffled;
 };
 
-export {getRandomInt, getShuffledArray};
+export {getRandomInt, getShuffledArray, createElement, render, unrender};
