@@ -5,13 +5,8 @@ const getSorting = function (caption) {
   return `<a href="#" class="board__filter">${caption}</a>`;
 };
 
-// const getTasks = function (tasksData) {
-//   return tasksData.map(getTask).join(``);
-// };
-
 const getBoard = function () {
-  return `
-    <section class="board container">
+  return `<section class="board container">
       <div class="board__filter-list">
         ${BOARD_SORTINGS.map(getSorting).join(``)}
       </div>

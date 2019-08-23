@@ -1,33 +1,37 @@
-import renderComponent from './render';
+import {createElement} from '../utils';
 
-const getFilterElement = function (caption, count, isChecked = false) {
-  return `
-    <input
-      type="radio"
-      id="filter__${caption.toLowerCase()}"
-      class="filter__input visually-hidden"
-      name="filter"
-      ${isChecked ? `checked` : ``}
-      ${count === 0 ? `disabled` : ``}
-    />
-    <label for="filter__all" class="filter__label">
-      ${caption}
-      <span class="filter__${caption.toLowerCase()}-count">${count}</span>
-    </label>
-  `;
-};
+class Filter {
+  constructor({CAPTION, value, isChecked}) {
+    this._caption = CAPTION;
+    this._value = value;
+    this._isChecked = isChecked;
+    this._element = null;
+  }
 
-const renderFilterElements = function (container, filtersData) {
-  renderComponent(
-      container,
-      `<section class="main__filter filter container"></section>`
-  );
-  const filterContainer = container.querySelector(`.main__filter`);
-  filtersData.forEach(
-      ({CAPTION, value, checked}) => {
-        renderComponent(filterContainer, getFilterElement(CAPTION, value, checked));
-      }
-  );
-};
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+    return this._element;
+  }
 
-export {renderFilterElements};
+  getTemplate() {
+    return `<div>
+      <input
+        type="radio"
+        id="filter__${this._caption.toLowerCase()}"
+        class="filter__input visually-hidden"
+        name="filter"
+        ${this._isChecked ? `checked` : ``}
+        ${this._value === 0 ? `disabled` : ``}
+      />
+      <label for="filter__all" class="filter__label">
+        ${this._caption}
+        <span class="filter__${this._caption.toLowerCase()}-count">${this._value}</span>
+      </label>
+    </div>
+  `.trim();
+  }
+}
+
+export {Filter};

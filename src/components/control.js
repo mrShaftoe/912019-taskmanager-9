@@ -1,49 +1,37 @@
-import renderComponent from './render';
+import {createElement} from '../utils';
 
-const CONTROLS = [
-  {
-    caption: `new-task`,
-    text: `+ add new task`
-  },
-  {
-    caption: `task`,
-    text: `tasks`,
-    checked: true},
-  {
-    caption: `statistic`,
-    text: `statisticts`}
-];
+class Control {
+  constructor({caption, text, isChecked = false}) {
+    this._caption = caption;
+    this._text = text;
+    this._isChecked = isChecked;
+    this._elem = null;
+  }
 
-const getControlElement = function (caption, text, isChecked = false) {
-  return `
-    <input
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+    return this._element;
+  }
+
+  getTemplate() {
+    return `<div>
+      <input
         type="radio"
         name="control"
-        id="control__${caption.toLowerCase()}"
+        id="control__${this._caption.toLowerCase()}"
         class="control__input visually-hidden"
-        ${isChecked ? `checked` : ``}
-    />
-    <label
-      for="control__${caption}"
-      class="control__label control__label--${caption.toLowerCase()}
-    ">${text.toUpperCase()}</label>
-  `;
-};
+        ${this._isChecked ? `checked` : ``}
+      />
+      <label
+        for="control__${this._caption.toLowerCase()}"
+        class="control__label control__label--${this._caption.toLowerCase()}
+      ">${this._text.toUpperCase()}</label>
+    </div>`;
+  }
+}
 
-const renderControlElements = function (container) {
-
-  const controlContainer = container.querySelector(`.main__control`);
-
-  renderComponent(
-      controlContainer,
-      `<section class="control__btn-wrap"></section>`
-  );
-  const controlsWrap = controlContainer.querySelector(`.control__btn-wrap`);
-  CONTROLS.forEach(
-      (it) => renderComponent(controlsWrap, getControlElement(it.caption, it.text, it.checked))
-  );
-};
-
-export {renderControlElements};
+export {Control};
 
 

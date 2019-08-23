@@ -9,7 +9,73 @@ const DESCRIPTIONS = [
 const COLORS = [`black`, `yellow`, `blue`, `green`, `pink`];
 const HASHTAGS_LIST = [`homework`, `theory`, `practice`, `intensive`, `keks`];
 const MAX_HASHTAGS = 3;
+const SEARCH_PLACEHOLDER = `START TYPING — SEARCH BY WORD, #HASHTAG OR DATE`;
+const CONTROLS = [
+  {
+    caption: `new-task`,
+    text: `+ add new task`
+  },
+  {
+    caption: `task`,
+    text: `tasks`,
+    isChecked: true},
+  {
+    caption: `statistic`,
+    text: `statisticts`}
+];
 
+const Filters = [
+  {
+    CAPTION: `All`,
+    filter(it) {
+      return it;
+    },
+    isChecked: true,
+  },
+  {
+    CAPTION: `Overdue`,
+    filter({dueDate}) {
+      return dueDate < Date.now();
+    }
+  },
+  {
+    CAPTION: `Today`,
+    filter({dueDate}) {
+      const now = new Date();
+      const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      const newDate = new Date(dueDate);
+      const taskDate = new Date(newDate.getFullYear(), newDate.getMonth(), newDate.getDate());
+      return today.toString() === taskDate.toString();
+    }
+
+  },
+  {
+    CAPTION: `Favorites`,
+    filter({isFavorite}) {
+      return isFavorite;
+    },
+
+  },
+  {
+    CAPTION: `Repeating`,
+    filter({repeatingDays}) {
+      return Object.keys(repeatingDays).some((it) => repeatingDays[it]);
+    },
+
+  },
+  {
+    CAPTION: `Tags`,
+    filter({hashtags}) {
+      return hashtags.length;
+    },
+  },
+  {
+    CAPTION: `Archive`,
+    filter({isArchive}) {
+      return isArchive;
+    },
+  }
+];
 
 const getTaskData = function () {
   return {
@@ -37,5 +103,11 @@ const getTaskData = function () {
   };
 };
 
+const getFiltersData = function (tasksData) {
+  Filters.forEach((it) => {
+    it.value = tasksData.filter(it.filter).length;
+  });
+  return Filters;
+};
 
-export {getTaskData};
+export {getTaskData, getFiltersData, CONTROLS, SEARCH_PLACEHOLDER};

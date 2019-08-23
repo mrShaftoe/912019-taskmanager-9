@@ -1,13 +1,11 @@
-import renderComponent from '../src/components/render';
-import {renderControlElements} from '../src/components/control';
-import {getSearchElement} from '../src/components/search';
-import {getFiltersData} from '../src/components/filtersdata';
-import {renderFilterElements} from '../src/components/filters';
+import {Control} from '../src/components/control';
+import {Search} from '../src/components/search';
+import {Filter} from '../src/components/filters';
 import {getBoard} from '../src/components/board';
-import {getTaskData} from './components/data.js';
+import {getTaskData, getFiltersData, CONTROLS, SEARCH_PLACEHOLDER} from './components/data.js';
 import {Task} from './components/task';
 import {TaskEdit} from './components/taskedit';
-import {render} from './utils';
+import {render, createElement} from './utils';
 
 const CARD_SHOWN_ONCE = 8;
 const main = document.querySelector(`.main`);
@@ -49,10 +47,48 @@ const renderTask = function (taskMock) {
   render(tasksContainer, task.getElement(), `beforeend`);
 };
 
-renderControlElements(main);
-renderComponent(main, getSearchElement());
-renderFilterElements(main, getFiltersData(tasks));
-renderComponent(main, getBoard());
+const renderControl = function (controlMock) {
+  const control = new Control(controlMock);
+  Array.from(control.getElement().children).forEach((it) =>
+    render(
+        main.querySelector(`.control__btn-wrap`),
+        it,
+        `beforeend`
+    )
+  );
+};
+
+const renderSearch = function (searchText) {
+  const search = new Search(searchText);
+  render(main, search.getElement(), `beforeend`);
+};
+
+const renderFilter = function (filterMock) {
+  const filter = new Filter(filterMock);
+  Array.from(filter.getElement().children).forEach((it) =>
+    render(
+        main.querySelector(`.main__filter`),
+        it,
+        `beforeend`
+    )
+  );
+};
+
+render(
+    main.querySelector(`.main__control`),
+    createElement(`<section class="control__btn-wrap"></section>`),
+    `beforeend`
+);
+
+CONTROLS.forEach(renderControl);
+renderSearch(SEARCH_PLACEHOLDER);
+render(
+    main,
+    createElement(`<section class="main__filter filter container"></section>`),
+    `beforeend`
+);
+getFiltersData(tasks).forEach(renderFilter);
+render(main, createElement(getBoard()), `beforeend`);
 
 let renderedCardsCount = 8;
 
