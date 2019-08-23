@@ -3,18 +3,18 @@ import {renderControlElements} from '../src/components/control';
 import {getSearchElement} from '../src/components/search';
 import {getFiltersData} from '../src/components/filtersdata';
 import {renderFilterElements} from '../src/components/filters';
-import {renderBoard} from '../src/components/board';
-import {renderTasks} from '../src/components/board/tasks';
-import {getTask} from './components/data.js';
+import {getBoard, getTasks} from '../src/components/board';
+import {getTaskData} from './components/data.js';
 
 const CARD_SHOWN_ONCE = 8;
 const main = document.querySelector(`.main`);
-const tasks = Array.from({length: 30}, getTask);
+const tasks = Array.from({length: 30}, getTaskData);
 
 renderControlElements(main);
 renderComponent(main, getSearchElement());
 renderFilterElements(main, getFiltersData(tasks));
-renderBoard(main, tasks);
+renderComponent(main, getBoard(tasks.slice(0, CARD_SHOWN_ONCE)));
+
 let renderedCardsCount = 8;
 
 const loadMoreButton = main.querySelector(`.load-more`);
@@ -34,6 +34,8 @@ loadMoreButton.addEventListener(`click`, function (evt) {
     loadMoreButton.remove();
   }
 
-  renderTasks(boardTasks, tasks.slice(startIndex, endIndex));
+  renderComponent(boardTasks, getTasks(tasks.slice(startIndex, endIndex)));
   renderedCardsCount += endIndex - startIndex;
 });
+
+

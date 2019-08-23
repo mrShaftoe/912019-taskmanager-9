@@ -11,7 +11,7 @@ const HASHTAGS_LIST = [`homework`, `theory`, `practice`, `intensive`, `keks`];
 const MAX_HASHTAGS = 3;
 
 
-const getTask = function () {
+const getTaskData = function () {
   return {
     description: DESCRIPTIONS[getRandomInt(DESCRIPTIONS.length)],
 
@@ -38,4 +38,4 @@ const getTask = function () {
 };
 
 
-export {getTask};
+export {getTaskData};

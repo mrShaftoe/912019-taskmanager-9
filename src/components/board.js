@@ -1,24 +1,28 @@
-import renderComponent from './render';
-import {renderSortingList} from './board/sorting';
-import {renderTasks} from './board/tasks';
-import {getLoadMoreButton} from './board/loadmorebutton';
-import {renderEditCard} from './board/cards';
+import {getTask, getTaskEdit} from './task';
 
-const renderBoard = function (container, tasksData) {
-  renderComponent(
-      container,
-      `<section class="board container"></section>`
-  );
-  const boardContainer = container.querySelector(`.board`);
-  renderComponent(
-      boardContainer,
-      `<div class="board__tasks"></div>`
-  );
-  const boardTasks = container.querySelector(`.board__tasks`);
-  renderEditCard(boardTasks, tasksData[0]);
-  renderTasks(boardTasks, tasksData.slice(1, 8));
-  renderComponent(boardContainer, getLoadMoreButton());
-  renderSortingList(boardContainer);
+const BOARD_SORTINGS = [`SORT BY DEFAULT`, `SORT BY DATE up`, `SORT BY DATE down`];
+
+const getSorting = function (caption) {
+  return `<a href="#" class="board__filter">${caption}</a>`;
 };
 
-export {renderBoard};
+const getTasks = function (tasksData) {
+  return tasksData.map(getTask).join(``);
+};
+
+const getBoard = function (tasksData) {
+  return `
+    <section class="board container">
+      <div class="board__filter-list">
+        ${BOARD_SORTINGS.map(getSorting).join(``)}
+      </div>
+      <div class="board__tasks">
+        ${getTaskEdit(tasksData[0])}
+        ${getTasks(tasksData.slice(1))}
+      </div>
+      <button class="load-more" type="button">load more</button>
+    </section>
+  `;
+};
+
+export {getBoard, getTasks};
