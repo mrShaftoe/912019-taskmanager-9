@@ -16,7 +16,7 @@ let renderedCardsCount = CARD_SHOWN_ONCE;
 
 const renderTask = function (taskMock) {
   const task = new Task(taskMock);
-  const taskEdit = new TaskEdit(taskMock);
+  const taskEdit = new TaskEdit(taskMock, tasks.indexOf(taskMock));
 
   const openTaskEdit = function () {
     tasksContainer.replaceChild(taskEdit.getElement(), task.getElement());

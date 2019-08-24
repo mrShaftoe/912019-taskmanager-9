@@ -1,8 +1,8 @@
 import {createElement} from '../utils';
 
 class Filter {
-  constructor({CAPTION, value, isChecked}) {
-    this._caption = CAPTION;
+  constructor({caption, value, isChecked}) {
+    this._caption = caption;
     this._value = value;
     this._isChecked = isChecked;
     this._element = null;

@@ -3,50 +3,51 @@ import {createElement} from '../utils';
 
 const COLORS = [`black`, `yellow`, `blue`, `green`, `pink`];
 
-const getRepeatingDay = function (dayName, isRepeating) {
+const getRepeatingDay = function (dayName, isRepeating, idx) {
   return `
     <input
       class="visually-hidden card__repeat-day-input"
         type="checkbox"
-        id="repeat-${dayName.toLowerCase()}-1"
+        id="repeat-${dayName.toLowerCase()}-${idx}"
         name="repeat"
         value="${dayName.toLowerCase()}"
         ${isRepeating ? `checked` : ``}
       />
-      <label class="card__repeat-day" for="repeat-${dayName.toLowerCase()}-1"
+      <label class="card__repeat-day" for="repeat-${dayName.toLowerCase()}-${idx}"
         >${dayName}</label
       >`;
 };
 
-const getRepeatingDays = function (repeatingDays) {
-  return Object.keys(repeatingDays).map((it) => getRepeatingDay(it, repeatingDays[it])).join(``);
+const getRepeatingDays = function (repeatingDays, idx) {
+  return Object.keys(repeatingDays).map((it) => getRepeatingDay(it, repeatingDays[it], idx)).join(``);
 };
 
-const getColor = function (color, isChecked) {
+const getColor = function (color, isChecked, idx) {
   return `
     <input
       type="radio"
-      id="color-${color}-1"
+      id="color-${color}-${idx}"
       class="card__color-input card__color-input--${color} visually-hidden"
       name="color"
       value="${color}"
       ${isChecked ? `checked` : ``}
     />
     <label
-      for="color-${color}-1"
+      for="color-${color}-${idx}"
       class="card__color card__color--${color}"
       >${color}</label
     >`;
 };
 
 class TaskEdit {
-  constructor({color, description, dueDate, hashtags, repeatingDays}) {
+  constructor({color, description, dueDate, hashtags, repeatingDays}, idx) {
     this._color = color;
     this._description = description;
     this._dueDate = dueDate;
     this._hashtags = hashtags;
     this._repeatingDays = repeatingDays;
     this._element = null;
+    this._idx = idx;
   }
 
   getElement() {
@@ -107,7 +108,7 @@ class TaskEdit {
 
                   <fieldset class="card__repeat-days" ${isRepeating ? `` : `disabled`}>
                     <div class="card__repeat-days-inner">
-                      ${getRepeatingDays(this._repeatingDays)}
+                      ${getRepeatingDays(this._repeatingDays, this._idx)}
                     </div>
                   </fieldset>
                 </div>
@@ -129,7 +130,7 @@ class TaskEdit {
               <div class="card__colors-inner">
                 <h3 class="card__colors-title">Color</h3>
                 <div class="card__colors-wrap">
-                  ${COLORS.map((it) => getColor(it, it === this._color)).join(` `)}
+                  ${COLORS.map((it) => getColor(it, it === this._color, this._idx)).join(` `)}
                 </div>
               </div>
             </div>

@@ -27,22 +27,22 @@ const CONTROLS = [
 const SORTINGS = [`SORT BY DEFAULT`, `SORT BY DATE up`, `SORT BY DATE down`];
 const LOAD_MORE_TEXT = `load more`;
 
-const Filters = [
+const FILTERS = [
   {
-    CAPTION: `All`,
+    caption: `All`,
     filter(it) {
       return it;
     },
     isChecked: true,
   },
   {
-    CAPTION: `Overdue`,
+    caption: `Overdue`,
     filter({dueDate}) {
       return dueDate < Date.now();
     }
   },
   {
-    CAPTION: `Today`,
+    caption: `Today`,
     filter({dueDate}) {
       const now = new Date();
       const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
@@ -53,27 +53,27 @@ const Filters = [
 
   },
   {
-    CAPTION: `Favorites`,
+    caption: `Favorites`,
     filter({isFavorite}) {
       return isFavorite;
     },
 
   },
   {
-    CAPTION: `Repeating`,
+    caption: `Repeating`,
     filter({repeatingDays}) {
       return Object.keys(repeatingDays).some((it) => repeatingDays[it]);
     },
 
   },
   {
-    CAPTION: `Tags`,
+    caption: `Tags`,
     filter({hashtags}) {
       return hashtags.length;
     },
   },
   {
-    CAPTION: `Archive`,
+    caption: `Archive`,
     filter({isArchive}) {
       return isArchive;
     },
@@ -107,10 +107,10 @@ const getTaskData = function () {
 };
 
 const getFiltersData = function (tasksData) {
-  Filters.forEach((it) => {
+  FILTERS.forEach((it) => {
     it.value = tasksData.filter(it.filter).length;
   });
-  return Filters;
+  return FILTERS;
 };
 
 export {getTaskData, getFiltersData, CONTROLS, SEARCH_PLACEHOLDER, SORTINGS, LOAD_MORE_TEXT};
