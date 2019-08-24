@@ -56,9 +56,13 @@ class TaskEdit {
     return this._element;
   }
 
+  removeElement() {
+    this._element = null;
+  }
+
   getTemplate() {
     const isRepeating = Object.values(this._repeatingDays).some((it) => it);
-    return `<article class=" card card--edit card--${this._color}${isRepeating ? ` card--repeat` : ``}${this._dueDate <= Date.now() ? ` card--deadline` : ``}">
+    return `<article class="card card--edit card--${this._color}${isRepeating ? ` card--repeat` : ``}${this._dueDate <= Date.now() ? ` card--deadline` : ``}">
         <form class="card__form" method="get">
           <div class="card__inner">
             ${getCardControls(1)}

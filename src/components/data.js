@@ -24,6 +24,9 @@ const CONTROLS = [
     text: `statisticts`}
 ];
 
+const SORTINGS = [`SORT BY DEFAULT`, `SORT BY DATE up`, `SORT BY DATE down`];
+const LOAD_MORE_TEXT = `load more`;
+
 const Filters = [
   {
     CAPTION: `All`,
@@ -110,4 +113,4 @@ const getFiltersData = function (tasksData) {
   return Filters;
 };
 
-export {getTaskData, getFiltersData, CONTROLS, SEARCH_PLACEHOLDER};
+export {getTaskData, getFiltersData, CONTROLS, SEARCH_PLACEHOLDER, SORTINGS, LOAD_MORE_TEXT};

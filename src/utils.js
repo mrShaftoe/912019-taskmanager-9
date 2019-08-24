@@ -26,6 +26,11 @@ const unrender = (element) => {
   }
 };
 
+const deleteElement = function (elem) {
+  unrender(elem.getElement());
+  elem.removeElement();
+};
+
 const getRandomInt = function (max, min = 0) {
   return Math.floor(Math.random() * (max - min)) + min;
 };
@@ -39,4 +44,4 @@ const getShuffledArray = function (arr) {
   return shuffled;
 };
 
-export {getRandomInt, getShuffledArray, createElement, render, unrender};
+export {getRandomInt, getShuffledArray, createElement, deleteElement, render, unrender};

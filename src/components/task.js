@@ -83,6 +83,10 @@ class Task {
     return this._element;
   }
 
+  removeElement() {
+    this._element = null;
+  }
+
   getTemplate() {
     const isRepeating = Object.values(this._repeatingDays).some((it) => it);
     return `<article class="card card--${this._color}${isRepeating ? ` card--repeat` : ``}${this._dueDate <= Date.now() ? ` card--deadline` : ``}">
