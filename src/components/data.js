@@ -1,5 +1,6 @@
 import {getRandomInt, getShuffledArray} from '../utils';
 
+const NO_TASKS_MESSAGE = `CONGRATULATIONS, ALL TASKS WERE COMPLETED! TO CREATE A NEW CLICK ON «ADD NEW TASK» BUTTON.`;
 const MS_IN_DAY = 24 * 60 * 60 * 1000;
 const DESCRIPTIONS = [
   `Изучить теорию`,
@@ -113,4 +114,4 @@ const getFiltersData = function (tasksData) {
   return FILTERS;
 };
 
-export {getTaskData, getFiltersData, CONTROLS, SEARCH_PLACEHOLDER, SORTINGS, LOAD_MORE_TEXT};
+export {getTaskData, getFiltersData, CONTROLS, SEARCH_PLACEHOLDER, SORTINGS, LOAD_MORE_TEXT, NO_TASKS_MESSAGE};

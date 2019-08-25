@@ -1,4 +1,4 @@
-import {getTaskData, getFiltersData, CONTROLS, SEARCH_PLACEHOLDER, SORTINGS, LOAD_MORE_TEXT} from './components/data.js';
+import {getTaskData, getFiltersData, CONTROLS, SEARCH_PLACEHOLDER, SORTINGS, LOAD_MORE_TEXT, NO_TASKS_MESSAGE} from './components/data.js';
 import {Control} from './components/control';
 import {Search} from './components/search';
 import {Filter} from './components/filters';
@@ -7,6 +7,7 @@ import {LoadMoreButton} from './components/loadmore';
 import {Sorting} from './components/sorting';
 import {Task} from './components/task';
 import {TaskEdit} from './components/taskedit';
+import {NoTasks} from './components/notasks';
 import {render, unrender, createElement, deleteElement} from './utils';
 
 const CARD_SHOWN_ONCE = 8;
@@ -124,6 +125,13 @@ const renderLoadMoreButton = function (loadMoreMock) {
   );
 };
 
+const renderNoTasks = function (noTasksMock) {
+  const noTasksMessage = new NoTasks(noTasksMock);
+  const board = main.querySelector(`.board`);
+  board.innerHTML = ``;
+  render(board, noTasksMessage.getElement(), `afterbegin`);
+};
+
 render(
     main.querySelector(`.main__control`),
     createElement(`<section class="control__btn-wrap"></section>`),
@@ -141,10 +149,14 @@ render(
 getFiltersData(tasks).forEach(renderFilter);
 
 render(main, createElement(getBoard()), `beforeend`);
-SORTINGS.forEach(renderSorting);
-renderLoadMoreButton(LOAD_MORE_TEXT);
 
 const tasksContainer = main.querySelector(`.board__tasks`);
-tasks.slice(0, CARD_SHOWN_ONCE).forEach(renderTask);
 
+if (!tasks.length || tasks.every(({isArchive}) => isArchive)) {
+  renderNoTasks(NO_TASKS_MESSAGE);
+} else {
+  SORTINGS.forEach(renderSorting);
+  renderLoadMoreButton(LOAD_MORE_TEXT);
+  tasks.slice(0, CARD_SHOWN_ONCE).forEach(renderTask);
+}
 
