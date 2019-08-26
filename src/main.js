@@ -2,59 +2,16 @@ import {getTaskData, getFiltersData, CONTROLS, SEARCH_PLACEHOLDER, SORTINGS, LOA
 import {Control} from './components/control';
 import {Search} from './components/search';
 import {Filter} from './components/filters';
-import {getBoard} from './components/board';
 import {LoadMoreButton} from './components/loadmore';
 import {Sorting} from './components/sorting';
-import {Task} from './components/task';
-import {TaskEdit} from './components/taskedit';
 import {NoTasks} from './components/notasks';
 import {render, unrender, createElement, deleteElement} from './utils';
+import {BoardController} from './controllers/board.js';
 
 const CARD_SHOWN_ONCE = 8;
 const main = document.querySelector(`.main`);
 const tasks = Array.from({length: 30}, getTaskData);
 let renderedCardsCount = CARD_SHOWN_ONCE;
-
-const renderTask = function (taskMock) {
-  const task = new Task(taskMock);
-  const taskEdit = new TaskEdit(taskMock, tasks.indexOf(taskMock));
-
-  const openTaskEdit = function () {
-    tasksContainer.replaceChild(taskEdit.getElement(), task.getElement());
-    document.addEventListener(`keydown`, onEscKeyPress);
-  };
-
-  const closeTaskEdit = function (evt) {
-    evt.preventDefault();
-    tasksContainer.replaceChild(task.getElement(), taskEdit.getElement());
-    document.removeEventListener(`keydown`, onEscKeyPress);
-  };
-
-  const onEscKeyPress = function (evt) {
-    if (evt.key === `Escape` || evt.key === `Esc`) {
-      closeTaskEdit(evt);
-    }
-  };
-
-  task.getElement()
-    .querySelector(`.card__btn--edit`)
-    .addEventListener(`click`, openTaskEdit);
-
-  taskEdit.getElement().querySelector(`textarea`)
-    .addEventListener(`focus`, () => {
-      document.removeEventListener(`keydown`, onEscKeyPress);
-    });
-
-  taskEdit.getElement().querySelector(`textarea`)
-    .addEventListener(`blur`, () => {
-      document.addEventListener(`keydown`, onEscKeyPress);
-    });
-
-  taskEdit.getElement().querySelector(`.card__form`)
-    .addEventListener(`submit`, closeTaskEdit);
-
-  render(tasksContainer, task.getElement(), `beforeend`);
-};
 
 const renderControl = function (controlMock) {
   const control = new Control(controlMock);
@@ -148,15 +105,14 @@ render(
 );
 getFiltersData(tasks).forEach(renderFilter);
 
-render(main, createElement(getBoard()), `beforeend`);
+const boardController = new BoardController(main, tasks);
+boardController.init();
 
-const tasksContainer = main.querySelector(`.board__tasks`);
-
-if (!tasks.length || tasks.every(({isArchive}) => isArchive)) {
-  renderNoTasks(NO_TASKS_MESSAGE);
-} else {
-  SORTINGS.forEach(renderSorting);
-  renderLoadMoreButton(LOAD_MORE_TEXT);
-  tasks.slice(0, CARD_SHOWN_ONCE).forEach(renderTask);
-}
+// if (!tasks.length || tasks.every(({isArchive}) => isArchive)) {
+//   renderNoTasks(NO_TASKS_MESSAGE);
+// } else {
+//   SORTINGS.forEach(renderSorting);
+//   renderLoadMoreButton(LOAD_MORE_TEXT);
+//   tasks.slice(0, CARD_SHOWN_ONCE).forEach(renderTask);
+// }
 

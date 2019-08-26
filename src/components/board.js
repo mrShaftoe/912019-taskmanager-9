@@ -1,11 +1,12 @@
-const getBoard = function () {
-  return `<section class="board container">
-      <div class="board__filter-list">
-      </div>
-      <div class="board__tasks">
-      </div>
-    </section>
-  `;
-};
+import {AbstractComponent} from './abstract-component';
 
-export {getBoard};
+class Board extends AbstractComponent {
+  constructor() {
+    super();
+  }
+
+  getTemplate() {
+    return `<section class="board container"></section>`.trim();
+  }
+}
+export {Board};
