@@ -1,6 +1,6 @@
-const CARD_CONTROLS = [`edit`, `archive`, `favorites`];
-import {createElement} from '../utils';
+import {AbstractComponent} from './abstract-component';
 
+const CARD_CONTROLS = [`edit`, `archive`, `favorites`];
 
 const getCardControlButton = function (caption) {
 
@@ -66,25 +66,14 @@ const getHashtags = function (hashtags) {
   `;
 };
 
-class Task {
+class Task extends AbstractComponent {
   constructor({color, description, dueDate, hashtags, repeatingDays}) {
+    super();
     this._color = color;
     this._description = description;
     this._dueDate = dueDate;
     this._hashtags = hashtags;
     this._repeatingDays = repeatingDays;
-    this._element = null;
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 
   getTemplate() {
@@ -115,4 +104,5 @@ class Task {
       </article>`;
   }
 }
+
 export {getCardControls, Task};

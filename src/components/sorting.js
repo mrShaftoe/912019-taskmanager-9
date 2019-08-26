@@ -1,20 +1,10 @@
-import {createElement} from '../utils';
+import {AbstractComponent} from './abstract-component';
 
-class Sorting {
+class Sorting extends AbstractComponent {
   constructor(caption) {
+    super();
     this._caption = caption;
     this.element = null;
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 
   getTemplate() {

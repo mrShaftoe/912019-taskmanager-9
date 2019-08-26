@@ -1,5 +1,5 @@
 import {getCardControls} from './task';
-import {createElement} from '../utils';
+import {AbstractComponent} from './abstract-component';
 
 const COLORS = [`black`, `yellow`, `blue`, `green`, `pink`];
 
@@ -39,8 +39,9 @@ const getColor = function (color, isChecked, idx) {
     >`;
 };
 
-class TaskEdit {
+class TaskEdit extends AbstractComponent {
   constructor({color, description, dueDate, hashtags, repeatingDays}, idx) {
+    super();
     this._color = color;
     this._description = description;
     this._dueDate = dueDate;
@@ -48,17 +49,6 @@ class TaskEdit {
     this._repeatingDays = repeatingDays;
     this._element = null;
     this._idx = idx;
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 
   getTemplate() {

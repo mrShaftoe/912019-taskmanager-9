@@ -1,22 +1,11 @@
-import {createElement} from '../utils';
+import {AbstractComponent} from './abstract-component';
 
-class Filter {
+class Filter extends AbstractComponent {
   constructor({caption, value, isChecked}) {
+    super();
     this._caption = caption;
     this._value = value;
     this._isChecked = isChecked;
-    this._element = null;
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 
   getTemplate() {
