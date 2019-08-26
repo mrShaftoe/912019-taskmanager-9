@@ -1,13 +1,12 @@
 import {Board} from "../components/board";
-import {FiltersList} from "../components/filterslist";
 import {BoardTasks} from "../components/boardtasks";
 import {Task} from "../components/task";
 import {NoTasks} from "../components/notasks";
 import {TaskEdit} from "../components/taskedit";
-import {Sorting} from "../components/sorting";
+import {Sort} from "../components/sorting";
 import {render, deleteElement} from "../utils";
 import {LoadMoreButton} from "../components/loadmore";
-import {LOAD_MORE_TEXT, NO_TASKS_MESSAGE, SORTINGS} from "../components/data";
+import {LOAD_MORE_TEXT, NO_TASKS_MESSAGE} from "../components/data";
 
 const TASKS_SHOWN_ONCE = 8;
 let renderedCardsCount = TASKS_SHOWN_ONCE;
@@ -16,14 +15,14 @@ class BoardController {
   constructor(container, tasks) {
     this._container = container;
     this._tasks = tasks;
+    this._sortedTasks = tasks.slice();
     this._board = new Board();
-    this._filtersList = new FiltersList();
     this._boardTasks = new BoardTasks();
+    this._sort = new Sort();
   }
 
   init() {
     render(this._container, this._board.getElement(), `beforeend`);
-    render(this._board.getElement(), this._filtersList.getElement(), `beforeend`);
     render(this._board.getElement(), this._boardTasks.getElement(), `beforeend`);
 
     if (!this._tasks.length || this._tasks.every(({isArchive}) => isArchive)) {
@@ -31,9 +30,10 @@ class BoardController {
       return;
     }
 
-    SORTINGS.forEach((sortingMock) => this._renderSorting(sortingMock));
+    render(this._board.getElement(), this._sort.getElement(), `afterbegin`);
     this._tasks.slice(0, TASKS_SHOWN_ONCE).forEach((taskMock) => this._renderTask(taskMock));
     this._renderLoadMoreButton(LOAD_MORE_TEXT);
+    this._sort.getElement().addEventListener(`click`, (evt) => this._onSortClickEvent(evt));
   }
 
   _renderTask(taskMock) {
@@ -77,15 +77,6 @@ class BoardController {
     render(this._boardTasks.getElement(), task.getElement(), `beforeend`);
   }
 
-  _renderSorting(sortingMock) {
-    const sorting = new Sorting(sortingMock);
-    render(
-        this._filtersList.getElement(),
-        sorting.getElement(),
-        `beforeend`
-    );
-  }
-
   _renderLoadMoreButton(loadMoreMock) {
     if (renderedCardsCount >= this._tasks.length) {
       return;
@@ -106,9 +97,9 @@ class BoardController {
 
       if (endIndex >= this._tasks.length - 1) {
         deleteElement(loadMoreButton);
-
       }
-      this._tasks.slice(startIndex, endIndex).forEach((taskMock) => this._renderTask(taskMock));
+
+      this._sortedTasks.slice(startIndex, endIndex).forEach((taskMock) => this._renderTask(taskMock));
       renderedCardsCount += endIndex - startIndex;
     });
 
@@ -123,6 +114,28 @@ class BoardController {
     const noTasksMessage = new NoTasks(noTasksMock);
     this._board.getElement().innerHTML = ``;
     render(this._board.getElement(), noTasksMessage.getElement(), `afterbegin`);
+  }
+
+  _onSortClickEvent(evt) {
+    evt.preventDefault();
+
+    if (evt.target.tagName !== `A`) {
+      return;
+    }
+
+    this._boardTasks.getElement().innerHTML = ``;
+    switch (evt.target.dataset.sortType) {
+      case `date-up`:
+        this._sortedTasks = this._tasks.slice().sort((a, b) => a.dueDate - b.dueDate);
+        break;
+      case `date-down`:
+        this._sortedTasks = this._tasks.slice().sort((a, b) => b.dueDate - a.dueDate);
+        break;
+      case `default`:
+        this._sortedTasks = this._tasks.slice();
+        break;
+    }
+    this._sortedTasks.slice(0, renderedCardsCount).forEach((taskMock) => this._renderTask(taskMock));
   }
 }
 

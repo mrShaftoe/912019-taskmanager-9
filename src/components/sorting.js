@@ -1,15 +1,19 @@
 import {AbstractComponent} from './abstract-component';
 
-class Sorting extends AbstractComponent {
-  constructor(caption) {
-    super();
-    this._caption = caption;
-    this.element = null;
+class Sort extends AbstractComponent {
+  _getSortItem(caption) {
+    return `<a href="#" class="board__filter">${caption}</a>`.trim();
   }
 
   getTemplate() {
-    return `<a href="#" class="board__filter">${this._caption}</a>`.trim();
+    return `
+      <div class="board__filter-list">
+        <a href="#" data-sort-type="default" class="board__filter">SORT BY DEFAULT</a>
+        <a href="#" data-sort-type="date-up" class="board__filter">SORT BY DATE up</a>
+        <a href="#" data-sort-type="date-down" class="board__filter">SORT BY DATE down</a>
+      </div>
+    `.trim();
   }
 }
 
-export {Sorting};
+export {Sort};
