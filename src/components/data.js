@@ -69,7 +69,7 @@ const FILTERS = [
   {
     caption: `Tags`,
     filter({hashtags}) {
-      return hashtags.length;
+      return hashtags.size;
     },
   },
   {
@@ -84,19 +84,19 @@ const getTaskData = function () {
   return {
     description: DESCRIPTIONS[getRandomInt(DESCRIPTIONS.length)],
 
-    dueDate: Date.now() + 1 + getRandomInt(7, -7) * MS_IN_DAY,
+    dueDate: new Date(Date.now() + 1 + getRandomInt(7, -7) * MS_IN_DAY),
 
     repeatingDays: {
-      Mo: false,
-      Tu: false,
-      We: false,
-      Th: Boolean(Math.round(Math.random())),
-      Fr: false,
-      Sa: false,
-      Su: false,
+      mo: false,
+      tu: false,
+      we: false,
+      th: Boolean(Math.round(Math.random())),
+      fr: false,
+      sa: false,
+      su: false,
     },
 
-    hashtags: getShuffledArray(HASHTAGS_LIST).slice(0, getRandomInt(MAX_HASHTAGS)),
+    hashtags: new Set(getShuffledArray(HASHTAGS_LIST).slice(0, getRandomInt(MAX_HASHTAGS))),
 
     color: COLORS[getRandomInt(COLORS.length)],
 

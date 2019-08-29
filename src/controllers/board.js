@@ -1,12 +1,11 @@
 import {Board} from "../components/board";
 import {BoardTasks} from "../components/boardtasks";
-import {Task} from "../components/task";
 import {NoTasks} from "../components/notasks";
-import {TaskEdit} from "../components/taskedit";
 import {Sort} from "../components/sorting";
 import {render, deleteElement} from "../utils";
 import {LoadMoreButton} from "../components/loadmore";
 import {LOAD_MORE_TEXT, NO_TASKS_MESSAGE} from "../components/data";
+import {TaskController} from "./taskcontroller";
 
 const TASKS_SHOWN_ONCE = 8;
 let renderedCardsCount = TASKS_SHOWN_ONCE;
@@ -19,6 +18,10 @@ class BoardController {
     this._board = new Board();
     this._boardTasks = new BoardTasks();
     this._sort = new Sort();
+
+    this._subscriptions = [];
+    this._onChangeView = this._onChangeView.bind(this);
+    this._onDataChange = this._onDataChange.bind(this);
   }
 
   init() {
@@ -37,44 +40,8 @@ class BoardController {
   }
 
   _renderTask(taskMock) {
-    const task = new Task(taskMock);
-    const taskEdit = new TaskEdit(taskMock, this._tasks.indexOf(taskMock));
-
-    const openTaskEdit = () => {
-      this._boardTasks.getElement().replaceChild(taskEdit.getElement(), task.getElement());
-      document.addEventListener(`keydown`, onEscKeyPress);
-    };
-
-    const closeTaskEdit = (evt) => {
-      evt.preventDefault();
-      this._boardTasks.getElement().replaceChild(task.getElement(), taskEdit.getElement());
-      document.removeEventListener(`keydown`, onEscKeyPress);
-    };
-
-    const onEscKeyPress = function (evt) {
-      if (evt.key === `Escape` || evt.key === `Esc`) {
-        closeTaskEdit(evt);
-      }
-    };
-
-    task.getElement()
-      .querySelector(`.card__btn--edit`)
-      .addEventListener(`click`, openTaskEdit);
-
-    taskEdit.getElement().querySelector(`textarea`)
-      .addEventListener(`focus`, () => {
-        document.removeEventListener(`keydown`, onEscKeyPress);
-      });
-
-    taskEdit.getElement().querySelector(`textarea`)
-      .addEventListener(`blur`, () => {
-        document.addEventListener(`keydown`, onEscKeyPress);
-      });
-
-    taskEdit.getElement().querySelector(`.card__form`)
-      .addEventListener(`submit`, closeTaskEdit);
-
-    render(this._boardTasks.getElement(), task.getElement(), `beforeend`);
+    const taskController = new TaskController(this._boardTasks, taskMock, this._onDataChange, this._onChangeView);
+    this._subscriptions.push(taskController.setDefaultView.bind(taskController));
   }
 
   _renderLoadMoreButton(loadMoreMock) {
@@ -116,6 +83,11 @@ class BoardController {
     render(this._board.getElement(), noTasksMessage.getElement(), `afterbegin`);
   }
 
+  _renderBoard(tasks) {
+    this._boardTasks.getElement().innerHTML = ``;
+    tasks.slice(0, renderedCardsCount).forEach((taskMock) => this._renderTask(taskMock));
+  }
+
   _onSortClickEvent(evt) {
     evt.preventDefault();
 
@@ -136,6 +108,16 @@ class BoardController {
         break;
     }
     this._sortedTasks.slice(0, renderedCardsCount).forEach((taskMock) => this._renderTask(taskMock));
+  }
+
+  _onChangeView() {
+    this._subscriptions.forEach((it) => it());
+  }
+
+  _onDataChange(newData, oldData) {
+    this._tasks[this._tasks.findIndex((it) => it === oldData)] = newData;
+    this._sortedTasks[this._sortedTasks.findIndex((it) => it === oldData)] = newData;
+    this._renderBoard(this._sortedTasks.slice(0, renderedCardsCount));
   }
 }
 

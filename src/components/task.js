@@ -60,7 +60,7 @@ const getHashtags = function (hashtags) {
   return `
     <div class="card__hashtag">
       <div class="card__hashtag-list">
-        ${hashtags.map(getHashtag).join(``)}
+        ${Array.from(hashtags).map(getHashtag).join(``)}
       </div>
     </div>
   `;

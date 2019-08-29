@@ -4,6 +4,8 @@ import {Search} from './components/search';
 import {Filter} from './components/filters';
 import {render, createElement} from './utils';
 import {BoardController} from './controllers/board.js';
+import 'flatpickr/dist/flatpickr.min.css';
+import 'flatpickr/dist/themes/light.css';
 
 const main = document.querySelector(`.main`);
 const tasks = Array.from({length: 30}, getTaskData);

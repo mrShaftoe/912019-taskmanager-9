@@ -14,5 +14,13 @@ module.exports = {
     compress: true,
     open: true,
     watchContentBase: true
+  },
+  module: {
+    rules: [
+      {
+        test: /\.css$/i,
+        use: [`style-loader`, `css-loader`],
+      }
+    ]
   }
 };
