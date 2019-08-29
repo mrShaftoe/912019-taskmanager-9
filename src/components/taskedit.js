@@ -39,6 +39,25 @@ const getColor = function (color, isChecked, idx) {
     >`;
 };
 
+const getHashtag = function (hashtag) {
+  return `
+    <span class="card__hashtag-inner">
+      <input
+        type="hidden"
+        name="hashtag"
+        value="${hashtag}"
+        class="card__hashtag-hidden-input"
+      />
+      <p class="card__hashtag-name">
+        #${hashtag}
+      </p>
+      <button type="button" class="card__hashtag-delete">
+        delete
+      </button>
+    </span>
+  `.trim();
+};
+
 class TaskEdit extends AbstractComponent {
   constructor({color, description, dueDate, hashtags, repeatingDays}, idx) {
     super();
@@ -105,7 +124,7 @@ class TaskEdit extends AbstractComponent {
 
                 <div class="card__hashtag">
                   <div class="card__hashtag-list"></div>
-
+                  ${this._hashtags ? Array.from(this._hashtags).map(getHashtag).join(``) : ``}
                   <label>
                     <input
                       type="text"

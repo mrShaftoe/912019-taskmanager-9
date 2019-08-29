@@ -58,7 +58,7 @@ class TaskController {
         const entry = {
           description: formData.get(`text`),
           dueDate: new Date(formData.get(`date`)),
-          tags: new Set(formData.getAll(`hashtag`)),
+          hashtags: new Set(formData.getAll(`hashtag`)),
           color: formData.get(`color`),
           repeatingDays: formData.getAll(`repeat`).reduce((acc, it) => {
             acc[it] = true;
