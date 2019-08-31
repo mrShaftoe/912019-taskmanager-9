@@ -22,7 +22,7 @@ class TaskController {
     });
 
     const deadlineFieldset = this._taskEdit.getElement().querySelector(`.card__date-deadline`);
-
+    const repeatFieldset = this._taskEdit.getElement().querySelector(`.card__repeat-days`);
     const openTaskEdit = (evt) => {
       evt.preventDefault();
       this._onChangeView();
@@ -63,7 +63,7 @@ class TaskController {
           hashtags: new Set(formData.getAll(`hashtag`)),
           color: formData.get(`color`),
           repeatingDays: formData.getAll(`repeat`).reduce((acc, it) => {
-            acc[it] = true;
+            acc[it] = repeatFieldset.disabled ? false : true;
             return acc;
           }, {
             mo: false,
@@ -95,6 +95,15 @@ class TaskController {
             deadlineFieldset.disabled = true;
             break;
         }
+      });
+
+    this._taskEdit.getElement().querySelector(`.card__repeat-toggle`)
+      .addEventListener(`click`, (evt) => {
+        evt.preventDefault();
+        const repeatStatus = this._taskEdit.getElement().querySelector(`.card__repeat-status`);
+        repeatFieldset.disabled = repeatFieldset.disabled ? false : true;
+        repeatStatus.innerText = repeatFieldset.disabled ? `no` : `yes`;
+
       });
 
     render(this._container.getElement(), this._taskView.getElement(), `beforeend`);
