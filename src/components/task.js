@@ -95,7 +95,7 @@ class Task extends AbstractComponent {
 
             <div class="card__settings">
               <div class="card__details">
-                ${this._dueDate ? getCardDeadline(this._dueDate) : ``}
+                ${this._dueDate && Date.parse(this._dueDate) ? getCardDeadline(this._dueDate) : `` }
                 ${this._hashtags ? getHashtags(this._hashtags) : ``}
               </div>
             </div>

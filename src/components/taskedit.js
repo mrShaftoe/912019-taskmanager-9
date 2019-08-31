@@ -97,15 +97,15 @@ class TaskEdit extends AbstractComponent {
               <div class="card__details">
                 <div class="card__dates">
                   <button class="card__date-deadline-toggle" type="button">
-                    date: <span class="card__date-status">${this._dueDate ? `yes` : `no`}</span>
+                    date: <span class="card__date-status">${Date.parse(this._dueDate) ? `yes` : `no`}</span>
                   </button>
 
-                  <fieldset class="card__date-deadline" ${this._dueDate ? `` : `disabled`}>
+                  <fieldset class="card__date-deadline" ${Date.parse(this._dueDate) ? `` : `disabled`}>
                     <label class="card__input-deadline-wrap">
                       <input
                         class="card__date"
                         type="text"
-                        placeholder="23 September"
+                        placeholder="${new Intl.DateTimeFormat(`en-GB`, {month: `short`, day: `numeric`}).format(Date.now())}"
                         name="date"
                       />
                     </label>

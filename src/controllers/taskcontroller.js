@@ -18,8 +18,10 @@ class TaskController {
     flatpickr(this._taskEdit.getElement().querySelector(`.card__date`), {
       altInput: true,
       allowInput: true,
-      defaultDate: this._taskMock.dueDate
+      defaultDate: Date.parse(this._taskMock.dueDate) ? this._taskMock.dueDate : 0,
     });
+
+    const deadlineFieldset = this._taskEdit.getElement().querySelector(`.card__date-deadline`);
 
     const openTaskEdit = (evt) => {
       evt.preventDefault();
@@ -57,7 +59,7 @@ class TaskController {
         const formData = new FormData(this._taskEdit.getElement().querySelector(`.card__form`));
         const entry = {
           description: formData.get(`text`),
-          dueDate: new Date(formData.get(`date`)),
+          dueDate: deadlineFieldset.disabled ? 0 : new Date(formData.get(`date`)),
           hashtags: new Set(formData.getAll(`hashtag`)),
           color: formData.get(`color`),
           repeatingDays: formData.getAll(`repeat`).reduce((acc, it) => {
@@ -71,12 +73,28 @@ class TaskController {
             fr: false,
             sa: false,
             su: false,
-          })
+          }),
+          isFavorite: this._taskMock.isFavorite,
+          isArchive: this._taskMock.isArchive,
         };
         this._onDataChange(entry, this._taskMock);
-
-
         document.removeEventListener(`keydown`, onEscKeyPress);
+      });
+
+    this._taskEdit.getElement().querySelector(`.card__date-deadline-toggle`)
+      .addEventListener(`click`, (evt) => {
+        evt.preventDefault();
+        const dateStatus = this._taskEdit.getElement().querySelector(`.card__date-status`);
+        switch (deadlineFieldset.disabled) {
+          case true:
+            dateStatus.innerText = `YES`;
+            deadlineFieldset.disabled = false;
+            break;
+          case false:
+            dateStatus.innerText = `NO`;
+            deadlineFieldset.disabled = true;
+            break;
+        }
       });
 
     render(this._container.getElement(), this._taskView.getElement(), `beforeend`);
