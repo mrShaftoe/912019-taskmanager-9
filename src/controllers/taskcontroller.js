@@ -1,7 +1,10 @@
 import {Task} from "../components/task";
 import {TaskEdit} from "../components/taskedit";
-import {render} from "../utils";
+import {render, deleteElement} from "../utils";
 import flatpickr from 'flatpickr';
+import {Hashtag} from "../components/hashtag";
+
+const COLORS = [`black`, `yellow`, `blue`, `green`, `pink`];
 
 class TaskController {
   constructor(container, taskMock, onDataChange, onChangeView) {
@@ -14,6 +17,19 @@ class TaskController {
     this.create();
   }
 
+  _renderHashtag(name) {
+    const hashtag = new Hashtag(name);
+    hashtag.getElement().querySelector(`.card__hashtag-delete`)
+      .addEventListener(`click`, () => {
+        deleteElement(hashtag);
+      });
+    render(
+        this._taskEdit.getElement().querySelector(`.card__hashtag-list`),
+        hashtag.getElement(),
+        `beforeend`
+    );
+  }
+
   create() {
     flatpickr(this._taskEdit.getElement().querySelector(`.card__date`), {
       altInput: true,
@@ -23,6 +39,7 @@ class TaskController {
 
     const deadlineFieldset = this._taskEdit.getElement().querySelector(`.card__date-deadline`);
     const repeatFieldset = this._taskEdit.getElement().querySelector(`.card__repeat-days`);
+
     const openTaskEdit = (evt) => {
       evt.preventDefault();
       this._onChangeView();
@@ -35,11 +52,17 @@ class TaskController {
       document.removeEventListener(`keydown`, onEscKeyPress);
     };
 
-    const onEscKeyPress = function (evt) {
+    const onEscKeyPress = (evt) => {
       if (evt.key === `Escape` || evt.key === `Esc`) {
         closeTaskEdit(evt);
       }
     };
+
+    this._taskEdit.getElement().querySelector(`.card__form`).addEventListener(`submit`, (evt) => {
+      evt.preventDefault();
+    });
+
+    this._taskEdit.getHashtags().forEach((it) => this._renderHashtag(it));
 
     this._taskView.getElement().querySelector(`.card__btn--edit`).addEventListener(`click`, openTaskEdit);
 
@@ -55,7 +78,6 @@ class TaskController {
 
     this._taskEdit.getElement().querySelector(`.card__form`)
       .addEventListener(`submit`, (evt) => {
-        evt.preventDefault();
         const formData = new FormData(this._taskEdit.getElement().querySelector(`.card__form`));
         const entry = {
           description: formData.get(`text`),
@@ -63,7 +85,7 @@ class TaskController {
           hashtags: new Set(formData.getAll(`hashtag`)),
           color: formData.get(`color`),
           repeatingDays: formData.getAll(`repeat`).reduce((acc, it) => {
-            acc[it] = repeatFieldset.disabled ? false : true;
+            acc[it] = true;
             return acc;
           }, {
             mo: false,
@@ -78,6 +100,7 @@ class TaskController {
           isArchive: this._taskMock.isArchive,
         };
         this._onDataChange(entry, this._taskMock);
+        evt.preventDefault();
         document.removeEventListener(`keydown`, onEscKeyPress);
       });
 
@@ -101,9 +124,43 @@ class TaskController {
       .addEventListener(`click`, (evt) => {
         evt.preventDefault();
         const repeatStatus = this._taskEdit.getElement().querySelector(`.card__repeat-status`);
-        repeatFieldset.disabled = repeatFieldset.disabled ? false : true;
-        repeatStatus.innerText = repeatFieldset.disabled ? `no` : `yes`;
+        switch (repeatFieldset.disabled) {
+          case true:
+            repeatFieldset.disabled = false;
+            repeatStatus.innerText = `Yes`;
+            this._taskEdit.getElement().classList.add(`card--repeat`);
+            break;
+          case false:
+            repeatFieldset.disabled = true;
+            repeatStatus.innerText = `No`;
+            this._taskEdit.getElement().classList.remove(`card--repeat`);
+            break;
+        }
 
+      });
+
+    this._taskEdit.getElement().querySelector(`.card__form`)
+      .addEventListener(`change`, (evt) => {
+        evt.preventDefault();
+        if (evt.target.classList.contains(`card__color-input`)) {
+          COLORS.forEach((it) => {
+            if (this._taskEdit.getElement().classList.contains(`card--${it}`)) {
+              this._taskEdit.getElement().classList.remove(`card--${it}`);
+            }
+          });
+          this._taskEdit.getElement().classList.add(`card--${evt.target.value}`);
+        }
+      });
+
+    this._taskEdit.getElement().querySelector(`.card__hashtag-input`)
+      .addEventListener(`keydown`, (evt) => {
+        if (evt.key === `Enter`) {
+          evt.preventDefault();
+          if (evt.target.value) {
+            this._renderHashtag(evt.target.value);
+            evt.target.value = null;
+          }
+        }
       });
 
     render(this._container.getElement(), this._taskView.getElement(), `beforeend`);
