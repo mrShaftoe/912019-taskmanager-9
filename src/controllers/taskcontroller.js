@@ -39,6 +39,8 @@ class TaskController {
 
     const deadlineFieldset = this._taskEdit.getElement().querySelector(`.card__date-deadline`);
     const repeatFieldset = this._taskEdit.getElement().querySelector(`.card__repeat-days`);
+    const favoriteButton = this._taskEdit.getElement().querySelector(`.card__btn--favorites`);
+    const archiveButton = this._taskEdit.getElement().querySelector(`.card__btn--archive`);
 
     const openTaskEdit = (evt) => {
       evt.preventDefault();
@@ -96,8 +98,8 @@ class TaskController {
             sa: false,
             su: false,
           }),
-          isFavorite: this._taskMock.isFavorite,
-          isArchive: this._taskMock.isArchive,
+          isFavorite: !favoriteButton.classList.contains(`card__btn--disabled`),
+          isArchive: !favoriteButton.classList.contains(`card__btn--disabled`),
         };
         this._onDataChange(entry, this._taskMock);
         evt.preventDefault();
@@ -162,6 +164,16 @@ class TaskController {
           }
         }
       });
+
+    favoriteButton.addEventListener(`click`, (evt) => {
+      evt.preventDefault();
+      favoriteButton.classList.toggle(`card__btn--disabled`);
+    });
+
+    archiveButton.addEventListener(`click`, (evt) => {
+      evt.preventDefault();
+      archiveButton.classList.toggle(`card__btn--disabled`);
+    });
 
     render(this._container.getElement(), this._taskView.getElement(), `beforeend`);
   }

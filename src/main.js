@@ -9,8 +9,6 @@ import 'flatpickr/dist/themes/light.css';
 
 const main = document.querySelector(`.main`);
 const tasks = Array.from({length: 30}, getTaskData);
-
-
 const renderControl = function (controlMock) {
   const control = new Control(controlMock);
   Array.from(control.getElement().children).forEach((it) =>

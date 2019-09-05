@@ -1,4 +1,3 @@
-import {getCardControls} from './task';
 import {AbstractComponent} from './abstract-component';
 
 const COLORS = [`black`, `yellow`, `blue`, `green`, `pink`];
@@ -40,7 +39,7 @@ const getColor = function (color, isChecked, idx) {
 };
 
 class TaskEdit extends AbstractComponent {
-  constructor({color, description, dueDate, hashtags, repeatingDays}, idx) {
+  constructor({color, description, dueDate, hashtags, repeatingDays, isArchive, isFavorite}, idx) {
     super();
     this._color = color;
     this._description = description;
@@ -48,6 +47,8 @@ class TaskEdit extends AbstractComponent {
     this._hashtags = hashtags;
     this._repeatingDays = repeatingDays;
     this._element = null;
+    this._isFavorite = isFavorite;
+    this._isArchive = isArchive;
     this._idx = idx;
   }
 
@@ -60,7 +61,20 @@ class TaskEdit extends AbstractComponent {
     return `<article class="card card--edit card--${this._color}${isRepeating ? ` card--repeat` : ``}${this._dueDate <= Date.now() ? ` card--deadline` : ``}">
         <form class="card__form" method="get">
           <div class="card__inner">
-            ${getCardControls(1)}
+            <div class="card__control">
+              <button
+                type="button"
+                class="
+                card__btn card__btn--archive
+                ${this._isArchive ? ` card__btn--disabled` : ``}"
+              >Archive</button>
+              <button
+                type="button"
+                class="
+                card__btn card__btn--favorites
+                ${this._isFavorite ? ` card__btn--disabled` : ``}"
+              >Favorites</button>
+            </div>
 
             <div class="card__color-bar">
               <svg class="card__color-bar-wave" width="100%" height="10">

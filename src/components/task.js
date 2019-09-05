@@ -1,29 +1,5 @@
 import {AbstractComponent} from './abstract-component';
 
-const CARD_CONTROLS = [`edit`, `archive`, `favorites`];
-
-const getCardControlButton = function (caption) {
-
-  return `
-      <button
-        type="button"
-        class="
-        card__btn card__btn--${caption.toLowerCase()}
-        ${caption === `favorites` ? ` card__btn--disabled` : ``}"
-      >
-      ${caption.toLowerCase()}
-      </button>
-  `;
-};
-
-const getCardControls = function (startIndex) {
-  return `
-    <div class="card__control">
-      ${CARD_CONTROLS.slice(startIndex).map(getCardControlButton).join(``)}
-    </div>
-  `;
-};
-
 const getDateOrTime = function (type, value) {
   const dateTime = type === `date` ?
     new Intl.DateTimeFormat(`en-GB`, {month: `long`, day: `numeric`}).format(value).toUpperCase() :
@@ -67,13 +43,15 @@ const getHashtags = function (hashtags) {
 };
 
 class Task extends AbstractComponent {
-  constructor({color, description, dueDate, hashtags, repeatingDays}) {
+  constructor({color, description, dueDate, hashtags, repeatingDays, isFavorite, isArchive}) {
     super();
     this._color = color;
     this._description = description;
     this._dueDate = dueDate;
     this._hashtags = hashtags;
     this._repeatingDays = repeatingDays;
+    this._isFavorite = isFavorite;
+    this._isArchive = isArchive;
   }
 
   getTemplate() {
@@ -81,8 +59,25 @@ class Task extends AbstractComponent {
     return `<article class="card card--${this._color}${isRepeating ? ` card--repeat` : ``}${this._dueDate <= Date.now() ? ` card--deadline` : ``}">
         <div class="card__form">
           <div class="card__inner">
-            ${getCardControls(0)}
-
+            <div class="card__control">
+              <button
+                type="button"
+                class="
+                card__btn card__btn--edit">
+                edit</button>
+              <button
+                type="button"
+                class="
+                card__btn card__btn--archive
+                ${this._isArchive ? ` card__btn--disabled` : ``}"
+              >Archive</button>
+              <button
+                type="button"
+                class="
+                card__btn card__btn--favorites
+                ${this._isFavorite ? ` card__btn--disabled` : ``}"
+              >Favorites</button>
+            </div>
             <div class="card__color-bar">
               <svg class="card__color-bar-wave" width="100%" height="10">
                 <use xlink:href="#wave"></use>
@@ -101,8 +96,8 @@ class Task extends AbstractComponent {
             </div>
           </div>
         </div>
-      </article>`;
+      </article>`.trim();
   }
 }
 
-export {getCardControls, Task};
+export {Task};
